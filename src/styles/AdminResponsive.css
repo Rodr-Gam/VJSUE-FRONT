@@ -1,0 +1,255 @@
+/* ============================================================
+   Admin responsive — aplica a todas las vistas del panel admin
+   Importado desde AdminLayout.css
+   ============================================================ */
+
+.al-content-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+@media (min-width: 769px) {
+  .al-content {
+    padding: 1rem 1.25rem 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .al-content {
+    padding: 3.75rem 0.65rem 1.25rem;
+    width: 100%;
+  }
+
+  .al-hamburger {
+    top: 10px;
+    left: 10px;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(201, 58, 71, 0.35);
+  }
+}
+
+/* ---- Tarjetas y layout general ---- */
+
+@media (max-width: 768px) {
+  .al-content .R-dashboard-cards {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .al-content .R-card-t,
+  .al-content .R-card-f,
+  .al-content .R-card-tt,
+  .al-content .R-card-b {
+    margin: 0 !important;
+    padding: 1rem !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 18px rgba(25, 51, 85, 0.08) !important;
+  }
+
+  .al-content .R-dashboard-title {
+    font-size: 1.35rem !important;
+    line-height: 1.25;
+    padding: 0 0.25rem;
+  }
+
+  .al-content .R-table-container {
+    padding: 0;
+  }
+}
+
+/* ---- Encabezados de listas (título + contador) ---- */
+
+@media (max-width: 768px) {
+  .al-content .R-card-t .flex.items-center.justify-between,
+  .al-content .R-card-f .flex.items-center.justify-between {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 0.75rem;
+  }
+
+  .al-content .R-card-t h3,
+  .al-content .R-card-f h3 {
+    font-size: 1.35rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .al-content .R-card-t span.bg-gray-200,
+  .al-content .R-card-f span.bg-gray-200 {
+    width: 100%;
+    padding: 0.55rem 0.85rem !important;
+    font-size: 0.78rem !important;
+    text-align: center;
+    border-radius: 10px;
+  }
+}
+
+/* ---- Barra de búsqueda / filtros ---- */
+
+@media (max-width: 768px) {
+  .al-content .flex.flex-wrap.gap-3.mb-4,
+  .al-content .flex.flex-wrap.gap-3.mb-6 {
+    flex-direction: column;
+    gap: 0.65rem !important;
+  }
+
+  .al-content .flex.flex-wrap.gap-3.mb-4 input,
+  .al-content .flex.flex-wrap.gap-3.mb-4 select,
+  .al-content .flex.flex-wrap.gap-3.mb-6 input,
+  .al-content .flex.flex-wrap.gap-3.mb-6 select,
+  .al-content .R-input,
+  .al-content .R-select,
+  .al-content .R-textarea {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 44px;
+    height: auto !important;
+    font-size: 16px;
+  }
+}
+
+/* ---- Tablas desktop con scroll horizontal en tablet ---- */
+
+.al-content .R-table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.al-content table.table-table {
+  min-width: 640px;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .al-content .hidden.md\:block {
+    overflow-x: auto;
+  }
+}
+
+/* ---- Tarjetas móviles (listas) ---- */
+
+.al-content .md\:hidden.space-y-3 > div,
+.al-content .md\:hidden > .border.border-gray-200.rounded-lg {
+  border: 1px solid rgba(25, 51, 85, 0.1) !important;
+  border-left: 4px solid #d3a762 !important;
+  border-radius: 14px !important;
+  padding: 1rem 1.05rem !important;
+  background: #fff !important;
+  box-shadow: 0 4px 14px rgba(25, 51, 85, 0.06);
+}
+
+.al-content .md\:hidden.space-y-3 > div p.font-semibold,
+.al-content .md\:hidden > div p.font-semibold {
+  color: #193355;
+  font-size: 1rem;
+}
+
+.al-content .md\:hidden.space-y-3 > div .flex.justify-between.items-start {
+  gap: 0.75rem;
+}
+
+/* ---- Formularios ---- */
+
+@media (max-width: 768px) {
+  .al-content .grid.grid-cols-1.md\:grid-cols-2,
+  .al-content .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4,
+  .al-content .grid.grid-cols-1.lg\:grid-cols-2,
+  .al-content .grid.grid-cols-1.lg\:grid-cols-3,
+  .al-content .grid.grid-cols-1.lg\:grid-cols-4 {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+    padding: 0 !important;
+  }
+
+  .al-content .R-button-f {
+    min-height: 44px;
+    font-size: 0.95rem;
+  }
+
+  .al-content .R-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .al-content .R-btn-action {
+    margin-left: 0;
+    min-width: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ---- Paginación ---- */
+
+.al-content .R-pagination,
+.al-content .flex.justify-center.items-center.gap-4.mt-4 {
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .al-content .flex.justify-center.items-center.gap-4.mt-4 span {
+    width: 100%;
+    text-align: center;
+    order: -1;
+    font-size: 0.85rem;
+    color: #475569;
+  }
+}
+
+/* ---- Alertas ---- */
+
+@media (max-width: 768px) {
+  .al-content .cc-alert {
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    padding: 0.75rem 0.9rem;
+  }
+}
+
+/* ---- Estados vacíos / carga ---- */
+
+@media (max-width: 768px) {
+  .al-content .text-center.text-gray-400.py-8 {
+    padding: 2rem 0.75rem !important;
+    font-size: 0.9rem;
+  }
+}
+
+/* ---- Crear pasajero / bloques anidados ---- */
+
+@media (max-width: 768px) {
+  .al-content .lg\:col-span-2 {
+    grid-column: span 1 / span 1 !important;
+  }
+
+  .al-content .max-h-56 {
+    max-height: 12rem;
+  }
+
+  .al-content .pg-card {
+    margin: 0;
+    border-radius: 12px;
+  }
+}
+
+/* ---- Editar reserva / botones superiores ---- */
+
+@media (max-width: 768px) {
+  .al-content .flex.gap-2,
+  .al-content .flex.gap-3 {
+    flex-wrap: wrap;
+  }
+
+  .al-content a.inline-flex,
+  .al-content button.inline-flex {
+    max-width: 100%;
+  }
+}

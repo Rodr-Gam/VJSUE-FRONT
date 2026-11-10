@@ -1,0 +1,536 @@
+/* ── Google Fonts ────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+/* ── CSS Variables ───────────────────────────────────────── */
+:root {
+  --color-background:              #faf8ff;
+  --color-error:                   #ba1a1a;
+  --color-primary:                 #001e3e;
+  --color-primary-container:       #193355;
+  --color-surface-deep:            #193355;
+  --color-surface-container:       #eeedf5;
+  --color-surface-container-low:   #f4f3fb;
+  --color-surface-variant:         #e2e2e9;
+  --color-outline:                 #74777f;
+  --color-outline-variant:         #c4c6cf;
+  --color-secondary:               #b22838;
+  --color-secondary-container:     #fd606a;
+  --color-on-primary:              #ffffff;
+  --color-on-surface:              #1a1b21;
+  --color-on-surface-variant:      #43474e;
+  --color-on-primary-container:    #839cc4;
+  --color-prestige-gold:           #D3A762;
+  --color-cta-coral:               #C93A47;
+  --color-base-lavender:           #F2F1F9;
+  --color-glass-stroke:            rgba(255, 255, 255, 0.15);
+
+  --font-family-base: 'Plus Jakarta Sans', sans-serif;
+
+  --fs-label-lg:    14px;
+  --lh-label-lg:    20px;
+  --fw-label-lg:    600;
+  --ls-label-lg:    0.05em;
+
+  --fs-label-sm:    12px;
+  --lh-label-sm:    16px;
+  --fw-label-sm:    500;
+
+  --fs-body-md:     16px;
+  --lh-body-md:     24px;
+  --fw-body-md:     400;
+
+  --fs-body-lg:     18px;
+  --lh-body-lg:     28px;
+  --fw-body-lg:     400;
+
+  --fs-headline-md: 24px;
+  --lh-headline-md: 32px;
+  --fw-headline-md: 600;
+
+  --fs-headline-lg: 32px;
+  --lh-headline-lg: 40px;
+  --fw-headline-lg: 600;
+
+  --fs-display-lg:        64px;
+  --lh-display-lg:        72px;
+  --fw-display-lg:        700;
+  --ls-display-lg:        -0.02em;
+
+  --fs-display-lg-mobile: 40px;
+  --lh-display-lg-mobile: 48px;
+}
+
+/* ── Reset / Base ────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+landing-body {
+  font-family: var(--font-family-base);
+  font-size: var(--fs-body-md);
+  line-height: var(--lh-body-md);
+  font-weight: var(--fw-body-md);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  overflow: hidden;
+}
+
+/* ── Background Layer ────────────────────────────────────── */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(25, 51, 85, 0.80);
+  z-index: 10;
+  -webkit-backdrop-filter: brightness(0.5);
+  backdrop-filter: brightness(0.5);
+}
+
+.bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.1) translate(-3.03px, -1.21px);
+  transition: transform 0.1s ease-out;
+}
+
+/* ── Decorative Vertical Text ────────────────────────────── */
+.vertical-text-wrapper {
+  position: fixed;
+  right: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: none;
+  opacity: 0.3;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media (min-width: 1024px) {
+  .vertical-text-wrapper { display: block; }
+}
+
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: var(--fs-display-lg);
+  line-height: var(--lh-display-lg);
+  font-weight: var(--fw-display-lg);
+  letter-spacing: 1em;
+  color: var(--color-prestige-gold);
+  text-transform: uppercase;
+}
+
+/* ── Main Layout ─────────────────────────────────────────── */
+.main-layout {
+  position: relative;
+  z-index: 30;
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+@media (min-width: 768px) {
+  .main-layout { padding: 0 32px; }
+}
+
+@media (min-width: 1024px) {
+  .main-layout {
+    justify-content: flex-start;
+    padding: 0 64px;
+  }
+}
+
+/* ── Form Card Wrapper ───────────────────────────────────── */
+.form-card-wrapper {
+  width: 100%;
+  max-width: 480px;
+}
+
+@media (min-width: 1024px) {
+  .form-card-wrapper { margin-left: 3rem; }
+}
+
+/* ── Custom Border (gradient frame) ─────────────────────── */
+.custom-border {
+  position: relative;
+  border-radius: 10px;
+}
+
+.custom-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: -1;
+  border-radius: 10px;
+}
+
+/* ── Glass Panel ─────────────────────────────────────────── */
+.glass-panel {
+  background: rgba(242, 241, 249, 0.95);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--color-glass-stroke);
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  transition: transform 0.5s ease;
+}
+
+.glass-panel:hover {
+  transform: translateY(-4px);
+}
+
+@media (min-width: 768px) {
+  .glass-panel { padding: 3rem; }
+}
+
+@media (min-width: 1024px) {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.855);
+  }
+}
+
+/* ── Brand Identity ──────────────────────────────────────── */
+.brand-section {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .brand-section { text-align: left; }
+}
+
+.brand-title {
+  font-size: var(--fs-headline-lg);
+  line-height: var(--lh-headline-lg);
+  font-weight: var(--fw-headline-lg);
+  color: var(--color-prestige-gold);
+  margin-bottom: 0.5rem;
+}
+
+.brand-subtitle {
+  font-size: var(--fs-label-lg);
+  line-height: var(--lh-label-lg);
+  font-weight: var(--fw-label-lg);
+  letter-spacing: var(--ls-label-lg);
+  color: rgba(0, 30, 62, 0.70);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* ── Form ────────────────────────────────────────────────── */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.form-group.focused {
+  transform: scale(1.02);
+}
+
+.form-label {
+  font-size: var(--fs-label-lg);
+  line-height: var(--lh-label-lg);
+  font-weight: var(--fw-label-lg);
+  letter-spacing: var(--ls-label-lg);
+  color: var(--color-primary);
+  display: block;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(0, 30, 62, 0.40);
+  font-family: 'Material Symbols Outlined';
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  background: white;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: 0.5rem;
+  outline: none;
+  font-family: var(--font-family-base);
+  font-size: var(--fs-body-md);
+  color: var(--color-primary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  border-color: var(--color-prestige-gold);
+  box-shadow: 0 0 0 1px var(--color-prestige-gold);
+}
+
+.form-input--password {
+  padding-right: 3rem;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(0, 30, 62, 0.40);
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-password-btn:hover {
+  color: var(--color-prestige-gold);
+}
+
+/* ── Row: Remember + Forgot ──────────────────────────────── */
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Custom Checkbox ─────────────────────────────────────── */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-box {
+  position: relative;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: 0.25rem;
+  transition: border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.checkbox-label:hover .checkbox-box {
+  border-color: var(--color-prestige-gold);
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  margin: 0;
+}
+
+.checkbox-check {
+  font-family: 'Material Symbols Outlined';
+  font-size: 16px;
+  color: var(--color-prestige-gold);
+  font-variation-settings: 'FILL' 1;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
+.checkbox-input:checked ~ .checkbox-check {
+  opacity: 1;
+}
+
+.checkbox-text {
+  font-size: var(--fs-label-sm);
+  line-height: var(--lh-label-sm);
+  font-weight: var(--fw-label-sm);
+  color: rgba(0, 30, 62, 0.60);
+}
+
+/* ── Forgot Password Link ────────────────────────────────── */
+.forgot-link {
+  font-size: var(--fs-label-sm);
+  line-height: var(--lh-label-sm);
+  font-weight: 600;
+  color: var(--color-cta-coral);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: var(--color-secondary-container);
+}
+
+/* ── Submit Button ───────────────────────────────────────── */
+.submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background: var(--color-cta-coral);
+  color: white;
+  font-family: var(--font-family-base);
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body-lg);
+  font-weight: var(--fw-headline-md);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s, box-shadow 0.3s, transform 0.1s;
+}
+
+.submit-btn:hover {
+  background: var(--color-secondary-container);
+  box-shadow: 0 0 20px rgba(201, 58, 71, 0.4);
+}
+
+.submit-btn:active {
+  transform: scale(0.95);
+}
+
+/* ── Auxiliary Actions ───────────────────────────────────── */
+.aux-actions {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0, 30, 62, 0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.aux-text {
+  font-size: var(--fs-label-sm);
+  line-height: var(--lh-label-sm);
+  color: rgba(0, 30, 62, 0.60);
+}
+
+.aux-link {
+  color: var(--color-prestige-gold);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.aux-link:hover {
+  text-decoration: underline;
+}
+
+.aux-icons {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(0, 30, 62, 0.40);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.icon-btn:hover {
+  color: var(--color-cta-coral);
+}
+
+/* ── Visual Anchor (Desktop Only) ────────────────────────── */
+.visual-anchor {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .visual-anchor {
+    display: flex;
+    flex: 1;
+    align-items: flex-end;
+    justify-content: flex-end;
+    height: 100vh;
+    padding-bottom: 64px;
+    padding-right: 64px;
+    pointer-events: none;
+  }
+}
+
+.anchor-content {
+  max-width: 28rem;
+  text-align: right;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.anchor-rule {
+  height: 4px;
+  width: 6rem;
+  background: var(--color-prestige-gold);
+  margin-left: auto;
+}
+
+.anchor-title {
+  font-size: var(--fs-headline-lg);
+  line-height: var(--lh-headline-lg);
+  font-weight: var(--fw-headline-lg);
+}
+
+.anchor-body {
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body-lg);
+  opacity: 0.7;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.landing-footer {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+}
+
+@media (min-width: 1024px) {
+  .landing-footer {
+    left: 64px;
+    transform: none;
+  }
+}
+
+.landing-footer-text {
+  font-size: var(--fs-label-sm);
+  line-height: var(--lh-label-sm);
+  color: rgba(255, 255, 255, 0.40);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}

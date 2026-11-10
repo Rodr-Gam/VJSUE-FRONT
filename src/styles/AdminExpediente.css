@@ -1,0 +1,529 @@
+/* Expediente del cliente — panel admin */
+
+.exp-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.exp-hero {
+  background: linear-gradient(135deg, #193355 0%, #243f66 55%, #1a3354 100%);
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(25, 51, 85, 0.22);
+  margin-bottom: 1.25rem;
+}
+
+.exp-hero-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.exp-hero-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.exp-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(211, 167, 98, 0.22);
+  border: 2px solid rgba(211, 167, 98, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #e8c98a;
+  flex-shrink: 0;
+}
+
+.exp-hero-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 0.35rem;
+}
+
+.exp-hero-sub {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 0.65rem;
+}
+
+.exp-contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.exp-contact-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.exp-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(88px, 1fr));
+  gap: 0.65rem;
+}
+
+.exp-stat {
+  text-align: center;
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.exp-stat-value {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.exp-stat-label {
+  display: block;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 0.2rem;
+}
+
+.exp-stat--archived .exp-stat-value { color: #fcd34d; }
+.exp-stat--active .exp-stat-value { color: #6ee7b7; }
+.exp-stat--total .exp-stat-value { color: #fff; }
+
+.exp-panel {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  box-shadow: 0 4px 18px rgba(25, 51, 85, 0.06);
+  padding: 1.25rem 1.5rem;
+}
+
+.exp-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.exp-panel-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #193355;
+  margin: 0;
+}
+
+.exp-filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  user-select: none;
+}
+
+.exp-filter-toggle input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #d3a762;
+}
+
+.exp-trip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.exp-trip {
+  border: 1px solid rgba(25, 51, 85, 0.1);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fafbfc;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.exp-trip:hover {
+  border-color: rgba(211, 167, 98, 0.35);
+}
+
+.exp-trip--open {
+  border-color: rgba(211, 167, 98, 0.5);
+  box-shadow: 0 6px 20px rgba(25, 51, 85, 0.08);
+  background: #fff;
+}
+
+.exp-trip-trigger {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.exp-trip-trigger:hover {
+  background: rgba(211, 167, 98, 0.04);
+}
+
+.exp-trip-id {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 0.25rem;
+}
+
+.exp-trip-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #193355;
+  margin: 0 0 0.35rem;
+}
+
+.exp-trip-dates {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.exp-trip-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+}
+
+.exp-service-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(25, 51, 85, 0.06);
+  color: #475569;
+}
+
+.exp-service-pill--flight { background: rgba(59, 130, 246, 0.12); color: #1d4ed8; }
+.exp-service-pill--hotel { background: rgba(168, 85, 247, 0.12); color: #7e22ce; }
+.exp-service-pill--transport { background: rgba(16, 185, 129, 0.12); color: #047857; }
+
+.exp-trip-chevron {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(25, 51, 85, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.exp-trip--open .exp-trip-chevron {
+  background: rgba(211, 167, 98, 0.15);
+  color: #b8860b;
+}
+
+.exp-trip-body {
+  padding: 0 1.15rem 1.15rem;
+  border-top: 1px solid rgba(25, 51, 85, 0.06);
+}
+
+.exp-loading {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.exp-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.exp-overview-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+}
+
+@media (min-width: 768px) {
+  .exp-overview-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.exp-mini-card {
+  background: #f8fafc;
+  border: 1px solid rgba(25, 51, 85, 0.07);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+}
+
+.exp-mini-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  margin-bottom: 0.65rem;
+}
+
+.exp-mini-card-head svg {
+  color: #d3a762;
+}
+
+.exp-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem 0.85rem;
+}
+
+.exp-field-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  margin-bottom: 0.1rem;
+}
+
+.exp-field-value {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #193355;
+  word-break: break-word;
+}
+
+.exp-services-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.exp-service-card {
+  border-radius: 12px;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  overflow: hidden;
+  background: #fff;
+}
+
+.exp-service-card--flight { border-left: 4px solid #3b82f6; }
+.exp-service-card--hotel { border-left: 4px solid #a855f7; }
+.exp-service-card--transport { border-left: 4px solid #10b981; }
+
+.exp-service-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  background: rgba(25, 51, 85, 0.03);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.exp-service-head svg {
+  flex-shrink: 0;
+}
+
+.exp-service-card--flight .exp-service-head svg { color: #3b82f6; }
+.exp-service-card--hotel .exp-service-head svg { color: #a855f7; }
+.exp-service-card--transport .exp-service-head svg { color: #10b981; }
+
+.exp-service-body {
+  padding: 0.85rem 1rem 1rem;
+}
+
+.exp-service-body .exp-field-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 640px) {
+  .exp-service-body .exp-field-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.exp-cost-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed rgba(25, 51, 85, 0.12);
+}
+
+.exp-cost-item {
+  text-align: center;
+  padding: 0.5rem 0.35rem;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.exp-cost-item-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+}
+
+.exp-cost-item-value {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #193355;
+  margin-top: 0.15rem;
+}
+
+.exp-cost-item--profit {
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.exp-cost-item--profit .exp-cost-item-value {
+  color: #047857;
+}
+
+.exp-note {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  background: #fffbeb;
+  border: 1px solid rgba(211, 167, 98, 0.25);
+  font-size: 0.82rem;
+  color: #57534e;
+  line-height: 1.45;
+}
+
+.exp-section-block {
+  border-radius: 12px;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  overflow: hidden;
+}
+
+.exp-section-block-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(25, 51, 85, 0.04);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #193355;
+}
+
+.exp-section-block-body {
+  padding: 0.85rem 1rem;
+  background: #fff;
+}
+
+.exp-section-block-body .adm-finance-panel-empty,
+.exp-section-block-body .adm-finance-panel-link {
+  font-size: 0.85rem;
+}
+
+.exp-docs-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.exp-docs-wrap .exp-section-block-body {
+  padding-top: 0;
+}
+
+.exp-docs-hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.exp-docs-wrap .adm-res-docs-embedded,
+.exp-docs-wrap > div {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.exp-footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  background: rgba(211, 167, 98, 0.12);
+  color: #8b6914;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.exp-footer-link:hover {
+  background: rgba(211, 167, 98, 0.22);
+}
+
+.exp-back-bar {
+  margin-top: 1.25rem;
+}
+
+.exp-empty {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #94a3b8;
+}
+
+.exp-room-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(25, 51, 85, 0.06);
+  font-size: 0.82rem;
+}
+
+.exp-room-row:last-child {
+  border-bottom: none;
+}

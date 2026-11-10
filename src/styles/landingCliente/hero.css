@@ -1,0 +1,117 @@
+/* ============================================================
+   Hero
+   ============================================================ */
+.lt-hero {
+  position: relative;
+  min-height: 100svh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.lt-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;   
+  height: 100%;  
+}
+
+.lt-hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center; 
+}
+
+.lt-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(25,51,85,0.4) 0%, rgba(25,51,85,0.85) 100%);
+}
+
+.lt-hero-content {
+  position: relative;
+  z-index: 10;
+  padding: 0 var(--page-pad);
+  max-width: var(--page-max);
+  margin: 0 auto;
+  width: 100%;
+}
+.lt-hero-text {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.lt-hero-sub {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.8);
+  max-width: 480px;
+}
+.lt-hero-btns {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 1rem;
+}
+.lt-hero-btns a {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.lt-scroll-indicator {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  animation: lt-bounce 2s infinite;
+}
+.lt-scroll-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+@keyframes lt-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(8px); }
+}
+
+@media (max-width: 767px) {
+  .lt-hero-content {
+    padding-top: 5.5rem;
+  }
+
+  .lt-hero-text {
+    gap: 1.25rem;
+  }
+
+  .lt-hero-sub {
+    font-size: 1rem;
+  }
+
+  .lt-hero-btns {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lt-hero-btns a,
+  .lt-hero-btns button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .lt-scroll-indicator {
+    display: none;
+  }
+}

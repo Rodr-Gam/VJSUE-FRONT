@@ -1,0 +1,820 @@
+/* Reserva privada rápida — layout scoped (.qr-page) */
+
+.qr-page {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 0 2.5rem;
+}
+
+.qr-page .R-dashboard-cards {
+  display: block;
+  max-width: none;
+}
+
+.qr-page .R-card-tt {
+  margin: 0 0 1.25rem;
+  padding: 1.35rem 1.5rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #193355 0%, #122540 100%);
+  box-shadow: 0 10px 28px rgba(25, 51, 85, 0.18);
+  border: none;
+}
+
+.qr-page .R-dashboard-title {
+  text-align: left;
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+  font-weight: 700;
+  color: #fff !important;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.qr-hero-sub {
+  margin: 0.45rem 0 0;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.45;
+  max-width: 36rem;
+}
+
+.qr-page .R-card-f {
+  margin: 0 0 1.15rem;
+  padding: 1.35rem 1.35rem 1.5rem;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  box-shadow: 0 4px 18px rgba(25, 51, 85, 0.06);
+}
+
+@media (min-width: 768px) {
+  .qr-page .R-card-f {
+    padding: 1.5rem 1.65rem 1.65rem;
+  }
+}
+
+.qr-section-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.qr-section-icon {
+  flex-shrink: 0;
+  width: 2.35rem;
+  height: 2.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(211, 167, 98, 0.18);
+  color: #8a6d2f;
+}
+
+.qr-section-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.qr-section-desc {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.qr-page .R-label {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(25, 51, 85, 0.72);
+  gap: 0.45rem;
+}
+
+.qr-page .R-input,
+.qr-page .R-select,
+.qr-page .R-textarea {
+  min-height: 46px;
+  padding: 0.65rem 0.85rem;
+  border: 1.5px solid rgba(25, 51, 85, 0.14);
+  border-radius: 10px;
+  font-size: 0.92rem;
+  color: #193355;
+  background: #fff;
+  text-transform: none;
+  font-weight: 400;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.qr-page .R-textarea {
+  min-height: 5rem;
+  resize: vertical;
+}
+
+.qr-page .R-input:focus,
+.qr-page .R-select:focus,
+.qr-page .R-textarea:focus {
+  outline: none;
+  border-color: #193355;
+  box-shadow: 0 0 0 3px rgba(25, 51, 85, 0.1);
+}
+
+.qr-page .R-input::placeholder,
+.qr-page .R-textarea::placeholder {
+  color: #94a3b8;
+  text-transform: none;
+}
+
+.qr-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem 1.15rem;
+}
+
+@media (min-width: 640px) {
+  .qr-grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .qr-grid--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .qr-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.qr-grid-span-full {
+  grid-column: 1 / -1;
+}
+
+.qr-client-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.qr-segment {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.25rem;
+  border-radius: 10px;
+  background: rgba(25, 51, 85, 0.05);
+  border: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.qr-segment-btn {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.qr-segment-btn--active {
+  background: #193355;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(25, 51, 85, 0.2);
+}
+
+.qr-new-client-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(25, 51, 85, 0.1);
+  background: rgba(248, 250, 252, 0.8);
+}
+
+@media (min-width: 640px) {
+  .qr-new-client-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.qr-dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 50;
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid rgba(25, 51, 85, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(25, 51, 85, 0.14);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.qr-dropdown li {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.88rem;
+  color: #193355;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.qr-dropdown li:hover {
+  background: rgba(211, 167, 98, 0.12);
+}
+
+.qr-dropdown-empty {
+  color: #94a3b8 !important;
+  cursor: default !important;
+}
+
+.qr-passenger-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+@media (min-width: 768px) {
+  .qr-passenger-row {
+    grid-template-columns: 88px repeat(4, minmax(0, 1fr));
+    align-items: center;
+  }
+}
+
+.qr-passenger-type {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8a6d2f;
+}
+
+.qr-service-card {
+  margin: 0 0 1rem;
+}
+
+.qr-service-card .R-card-f {
+  margin: 0;
+}
+
+.qr-service-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.85rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.qr-service-toggle input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: #193355;
+}
+
+.qr-service-toggle span {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.qr-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), #fff);
+  border: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.qr-page .qr-submit {
+  width: auto;
+  min-width: 220px;
+  min-height: 48px;
+  padding: 0.75rem 1.35rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #193355 0%, #122540 100%);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(25, 51, 85, 0.22);
+  transition: transform 0.12s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+
+.qr-page .qr-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(25, 51, 85, 0.28);
+}
+
+.qr-page .qr-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.qr-page .cc-alert {
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.qr-page .R-finance-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.qr-page .R-finance-summary--polished {
+  border: none;
+  box-shadow: 0 10px 32px rgba(25, 51, 85, 0.1);
+}
+
+.qr-section-head--compact {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.qr-services-intro {
+  padding: 1rem 1.35rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  margin-bottom: 0.35rem;
+}
+
+.qr-services-intro.R-card-f {
+  background: linear-gradient(
+    180deg,
+    rgba(25, 51, 85, 0.04) 0%,
+    transparent 100%
+  );
+}
+
+.qr-service-card--open {
+  border-color: rgba(211, 167, 98, 0.35);
+  box-shadow: 0 6px 22px rgba(25, 51, 85, 0.08);
+}
+
+.qr-service-card--open .qr-service-toggle span {
+  color: #8a6d2f;
+}
+
+.qr-passengers-list {
+  margin-top: 1.15rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.qr-passengers-head {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .qr-passengers-head {
+    display: grid;
+    grid-template-columns: 88px repeat(4, minmax(0, 1fr));
+    gap: 0.65rem;
+    padding: 0 0 0.5rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(25, 51, 85, 0.45);
+  }
+}
+
+.qr-passenger-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.qr-subsection {
+  margin-top: 1.15rem;
+  padding: 1rem 1.05rem;
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.9);
+  border: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.qr-subsection-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.qr-subsection-title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.qr-subsection-desc {
+  margin: 0 0 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.qr-room-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px dashed rgba(25, 51, 85, 0.1);
+}
+
+.qr-room-row:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+@media (min-width: 768px) {
+  .qr-room-row {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(0, 0.9fr) auto;
+  }
+}
+
+.qr-btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: none;
+  background: transparent;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #a67c3d;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.qr-btn-link:hover {
+  background: rgba(211, 167, 98, 0.14);
+  color: #8a6d2f;
+}
+
+.qr-btn-link--danger {
+  color: #b91c1c;
+  justify-self: start;
+}
+
+.qr-btn-link--danger:hover {
+  background: rgba(185, 28, 28, 0.08);
+  color: #991b1b;
+}
+
+.qr-profit {
+  background: rgba(22, 163, 74, 0.08) !important;
+  border-color: rgba(22, 163, 74, 0.25) !important;
+  color: #15803d !important;
+  font-weight: 700 !important;
+  display: flex;
+  align-items: center;
+}
+
+.qr-page .pkg-official-prices {
+  padding: 1rem 1.05rem;
+  border-radius: 12px;
+  background: rgba(25, 51, 85, 0.03);
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  border-top: 1px solid rgba(25, 51, 85, 0.08);
+  margin-top: 0.5rem;
+}
+
+.qr-page .pkg-info-prices {
+  border-radius: 12px;
+}
+
+.pkg-platform-profit-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+  align-items: end;
+}
+
+@media (min-width: 640px) {
+  .pkg-platform-profit-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.pkg-price-breakdown .pkg-info-total {
+  margin: 0;
+}
+
+.pkg-auto-profit {
+  min-height: 100%;
+}
+
+.qr-service-finance {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem 1.15rem;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 900px) {
+  .qr-service-finance {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.qr-field-hint {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.qr-profit-pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .qr-profit-pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.qr-profit-box {
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(22, 163, 74, 0.22);
+}
+
+.qr-profit-box--libre {
+  background: rgba(25, 51, 85, 0.06);
+  border-color: rgba(25, 51, 85, 0.14);
+}
+
+.qr-profit-box--libre .qr-profit-value {
+  color: #193355;
+}
+
+.qr-profit-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #15803d;
+}
+
+.qr-profit-box--libre .qr-profit-label {
+  color: #193355;
+}
+
+.qr-profit-hint {
+  display: block;
+  font-size: 0.72rem;
+  color: #64748b;
+  margin: 0.15rem 0 0.35rem;
+}
+
+.qr-profit-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.qr-profit-box--negative {
+  background: rgba(185, 28, 28, 0.08) !important;
+  border-color: rgba(185, 28, 28, 0.28) !important;
+}
+
+.qr-profit-box--negative .qr-profit-label,
+.qr-profit-box--negative .qr-profit-value {
+  color: #b91c1c !important;
+}
+
+/* Viaje y precios — subpaneles */
+.qr-page .qr-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.qr-page .qr-subpanel-title {
+  margin: 0 0 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(25, 51, 85, 0.55);
+}
+
+.qr-page .qr-trip-panel {
+  padding: 1rem 1.05rem 1.1rem;
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  border-left: 3px solid rgba(211, 167, 98, 0.75);
+  box-shadow: 0 2px 10px rgba(25, 51, 85, 0.04);
+}
+
+.qr-page .qr-pricing-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.qr-page .qr-pricing-panel .pkg-price-breakdown {
+  margin: 0;
+  padding: 1.15rem 1.2rem 1.2rem;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(25, 51, 85, 0.1);
+  border-left: 3px solid rgba(25, 51, 85, 0.35);
+  box-shadow: 0 4px 16px rgba(25, 51, 85, 0.05);
+}
+
+.qr-page .pkg-info-total--emphasis .R-input {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.qr-page .pkg-age-prices-grid {
+  padding: 0.85rem 0.95rem 0.95rem;
+  border-radius: 10px;
+  background: rgba(248, 250, 252, 0.9);
+  border: 1px dashed rgba(25, 51, 85, 0.14);
+}
+
+.qr-page .qr-pricing-panel .pkg-info-hint,
+.qr-page .qr-pricing-panel .pkg-info-error {
+  margin-top: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.qr-page .qr-pricing-panel .pkg-info-hint {
+  background: rgba(22, 163, 74, 0.06);
+  border: 1px solid rgba(22, 163, 74, 0.15);
+  color: #166534;
+}
+
+.qr-page .qr-pricing-panel .pkg-info-error {
+  background: rgba(185, 28, 28, 0.06);
+  border: 1px solid rgba(185, 28, 28, 0.2);
+}
+
+.qr-page .qr-pricing-panel .pkg-info-prices-head {
+  margin-bottom: 1rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.qr-page .qr-pricing-panel .pkg-info-prices-title {
+  font-size: 0.95rem;
+  color: #193355;
+}
+
+.qr-page .pkg-age-prices-label {
+  margin: 0.35rem 0 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(25, 51, 85, 0.5);
+}
+
+.qr-page .pkg-age-field .R-input {
+  background: rgba(248, 250, 252, 0.9);
+}
+
+.qr-page .pkg-auto-profit {
+  min-height: 4.85rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pkg-profit-rate-segment {
+  margin: 0.15rem 0 0.25rem;
+}
+
+.pkg-profit-rate-segment .qr-segment {
+  margin-top: 0.4rem;
+  width: 100%;
+}
+
+.pkg-profit-rate-segment .qr-segment-btn {
+  flex: 1;
+  text-align: center;
+  min-width: 0;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.qr-page .qr-commercial-block {
+  padding: 1.15rem 1.2rem 1.2rem;
+  border-radius: 12px;
+  background: linear-gradient(
+    180deg,
+    rgba(25, 51, 85, 0.03) 0%,
+    rgba(255, 255, 255, 1) 45%
+  );
+  border: 1px solid rgba(25, 51, 85, 0.1);
+  border-left: 3px solid rgba(211, 167, 98, 0.55);
+  box-shadow: 0 4px 16px rgba(25, 51, 85, 0.05);
+}
+
+.qr-page .qr-commercial-block .qr-profit-pair {
+  margin-top: 0.15rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.qr-page .qr-commercial-block .qr-subpanel-title {
+  margin-bottom: 1rem;
+}
+
+.qr-page .qr-commercial-block .qr-service-finance {
+  margin-top: 0;
+}
+
+.qr-page .qr-payment-plan {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.qr-page .qr-payment-plan-preview {
+  margin-top: 0.85rem;
+}
+
+.qr-page .qr-payment-plan-list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.qr-page .qr-payment-plan-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid rgba(25, 51, 85, 0.06);
+  font-size: 0.88rem;
+}
+
+.qr-page .qr-observations-block {
+  margin: 0;
+  padding: 1rem 1.05rem;
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.qr-page .qr-observations-block .R-textarea {
+  min-height: 4.5rem;
+}
+
+@media (min-width: 900px) {
+  .qr-page .pkg-platform-profit-row {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: stretch;
+  }
+}

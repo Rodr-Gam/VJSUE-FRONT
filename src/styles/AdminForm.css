@@ -1,0 +1,205 @@
+/* Formularios admin — crear / editar */
+
+.adm-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.adm-form-hero {
+  background: linear-gradient(135deg, #193355 0%, #122540 100%);
+  border-radius: 14px;
+  padding: 1.25rem 1.35rem;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(25, 51, 85, 0.18);
+}
+
+.adm-form-hero-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(211, 167, 98, 0.85);
+  margin-bottom: 0.35rem;
+}
+
+.adm-form-hero-title {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.adm-form-card {
+  background: #fff;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  border-radius: 14px;
+  padding: 1.15rem;
+  box-shadow: 0 4px 18px rgba(25, 51, 85, 0.06);
+}
+
+@media (min-width: 768px) {
+  .adm-form-card {
+    padding: 1.35rem 1.5rem;
+  }
+}
+
+.adm-form-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.adm-form-card-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.adm-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .adm-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .adm-form-grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.adm-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+/* Legacy R-* dentro del admin */
+.al-content .R-dashboard-cards {
+  display: block;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.al-content .R-card-tt,
+.al-content .R-card-f,
+.al-content .R-card-t,
+.al-content .R-card-b {
+  margin: 0 0 1rem !important;
+  background: #fff !important;
+  border: 1px solid rgba(25, 51, 85, 0.08) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 18px rgba(25, 51, 85, 0.06) !important;
+  padding: 1.15rem !important;
+}
+
+.al-content .R-card-tt {
+  background: linear-gradient(135deg, #193355 0%, #122540 100%) !important;
+  border: none !important;
+  padding: 1.25rem 1.35rem !important;
+}
+
+.al-content .R-dashboard-title {
+  font-size: clamp(1.25rem, 3vw, 1.65rem) !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  text-align: left !important;
+}
+
+.al-content .R-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(25, 51, 85, 0.55);
+  margin-top: 0;
+}
+
+.al-content .R-input,
+.al-content .R-select,
+.al-content .R-textarea {
+  min-height: 44px;
+  border: 1.5px solid rgba(25, 51, 85, 0.12) !important;
+  border-radius: 10px !important;
+  padding: 0.65rem 0.85rem !important;
+  font-size: 0.92rem !important;
+  color: #193355;
+  background: #fafbfd;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.al-content .R-input:focus,
+.al-content .R-select:focus,
+.al-content .R-textarea:focus {
+  outline: none;
+  border-color: rgba(211, 167, 98, 0.65) !important;
+  box-shadow: 0 0 0 3px rgba(211, 167, 98, 0.15);
+  background: #fff;
+}
+
+.al-content .R-button-f {
+  width: auto;
+  min-width: 140px;
+  min-height: 44px;
+  padding: 0.65rem 1.25rem !important;
+  border: none;
+  border-radius: 10px !important;
+  background: #193355 !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.al-content .R-button-f:hover:not(:disabled) {
+  background: #122540 !important;
+  transform: translateY(-1px);
+}
+
+.al-content .R-button-f:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.al-content .R-btn-action {
+  background: #fdfdfe;
+  border: 1px solid #d3a762;
+  padding: 6px 7px;
+  margin-left: 0;
+  border-radius: 10px;
+  min-width: 38px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.al-content .R-btn-edit:hover {
+  background: rgba(201, 177, 134, 0.44);
+}
+
+.al-content .R-btn-delete:hover {
+  background: rgba(201, 58, 70, 0.24);
+}
+
+.al-content .cc-alert {
+  border-radius: 12px;
+}

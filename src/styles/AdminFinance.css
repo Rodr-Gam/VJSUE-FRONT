@@ -1,0 +1,1176 @@
+/* Finanzas admin — resumen, tabs, modales */
+
+.adm-finance-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+}
+
+@media (min-width: 640px) {
+  .adm-finance-summary {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .adm-finance-summary {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .adm-finance-summary--profits {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .adm-finance-summary--profits {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.adm-finance-summary--inline {
+  margin-bottom: 1rem;
+}
+
+.adm-payment-plan {
+  margin: 1.25rem 0;
+  padding: 1rem 1.05rem;
+  border-radius: 12px;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  background: rgba(248, 250, 252, 0.65);
+}
+
+.adm-payment-plan--compact .adm-table-wrap {
+  overflow-x: auto;
+}
+
+.adm-payment-plan-head {
+  margin-bottom: 0.75rem;
+}
+
+.adm-finance-panel-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #193355;
+  margin: 0;
+}
+
+.adm-finance-panel-sub {
+  margin: 0.25rem 0 0;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.adm-finance-stat {
+  background: #fff;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 10px rgba(25, 51, 85, 0.04);
+}
+
+.adm-finance-stat-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(25, 51, 85, 0.5);
+  margin-bottom: 0.35rem;
+}
+
+.adm-finance-stat-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.adm-finance-stat-value--paid {
+  color: #047857;
+}
+
+.adm-finance-stat-value--due {
+  color: #b45309;
+}
+
+.adm-finance-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(25, 51, 85, 0.08);
+  padding-bottom: 0.75rem;
+}
+
+.adm-finance-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 40px;
+  padding: 0.45rem 0.9rem;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.adm-finance-tab:hover {
+  background: rgba(211, 167, 98, 0.08);
+  color: #193355;
+}
+
+.adm-finance-tab--active {
+  background: rgba(25, 51, 85, 0.06);
+  border-color: rgba(211, 167, 98, 0.45);
+  color: #193355;
+}
+
+.adm-finance-row--overdue td {
+  background: rgba(239, 68, 68, 0.06) !important;
+}
+
+.adm-finance-row--trip-alert td {
+  background: rgba(245, 158, 11, 0.08) !important;
+}
+
+.adm-finance-row--trip-alert-urgent td {
+  background: rgba(239, 68, 68, 0.07) !important;
+}
+
+.adm-supplier-trip-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  background: linear-gradient(
+    135deg,
+    rgba(254, 243, 199, 0.9) 0%,
+    rgba(255, 251, 235, 0.95) 100%
+  );
+}
+
+.adm-supplier-trip-banner-icon {
+  flex-shrink: 0;
+  color: #b45309;
+}
+
+.adm-supplier-trip-banner-text {
+  flex: 1;
+  min-width: 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.82rem;
+  color: #78350f;
+}
+
+.adm-supplier-trip-banner-text strong {
+  font-size: 0.9rem;
+  color: #92400e;
+}
+
+.adm-supplier-trip-banner-btn {
+  flex-shrink: 0;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(180, 83, 9, 0.35);
+  background: white;
+  color: #92400e;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.adm-supplier-trip-banner-btn:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.adm-supplier-trip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 100%;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.adm-supplier-trip-badge--warning {
+  background: rgba(254, 243, 199, 0.95);
+  color: #92400e;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.adm-supplier-trip-badge--urgent {
+  background: rgba(254, 226, 226, 0.95);
+  color: #b91c1c;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.adm-supplier-trip-departure {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
+.adm-supplier-trip-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.adm-supplier-trip-panel--warning {
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(254, 243, 199, 0.45);
+  color: #78350f;
+}
+
+.adm-supplier-trip-panel--urgent {
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  background: rgba(254, 226, 226, 0.45);
+  color: #991b1b;
+}
+
+.adm-supplier-trip-panel-title {
+  margin: 0 0 0.2rem;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.adm-supplier-trip-panel-msg {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.adm-finance-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.adm-finance-modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(25, 51, 85, 0.2);
+  padding: 1.25rem;
+}
+
+.adm-finance-modal-title {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.adm-finance-modal--wide {
+  max-width: 640px;
+}
+
+.adm-res-docs-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.adm-res-docs-modal-head .adm-finance-modal-title {
+  margin-bottom: 0.25rem;
+}
+
+.adm-res-docs-modal-sub {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.adm-res-docs-modal-hint {
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.adm-res-docs-modal-close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 8px;
+  background: rgba(25, 51, 85, 0.06);
+  color: #193355;
+  cursor: pointer;
+}
+
+.adm-res-docs-modal-close:hover {
+  background: rgba(25, 51, 85, 0.12);
+}
+
+.adm-res-docs-embedded {
+  padding: 0;
+}
+
+.adm-docs-cell-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.adm-docs-cell-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(25, 51, 85, 0.12);
+}
+
+.adm-docs-cell-btn:focus-visible {
+  outline: 2px solid #d3a762;
+  outline-offset: 2px;
+}
+
+.adm-finance-form-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.adm-finance-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.adm-finance-panel-empty {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.adm-finance-panel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #193355;
+  text-decoration: none;
+}
+
+.adm-finance-panel-link:hover {
+  color: #d3a762;
+}
+
+.adm-finance-clickable-row {
+  cursor: pointer;
+}
+
+.adm-finance-clickable-row:hover td {
+  background: rgba(211, 167, 98, 0.08) !important;
+}
+
+.adm-money-cell {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  min-width: 88px;
+}
+
+.adm-receipts-panel {
+  margin-top: 0.5rem;
+}
+
+.adm-receipts-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.adm-receipts-item {
+  padding: 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  background: #fff;
+}
+
+.adm-receipts-item-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.adm-receipts-name {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.adm-receipts-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.adm-receipts-note {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  color: #475569;
+}
+
+.adm-receipts-badge {
+  flex-shrink: 0;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.adm-receipts-badge--pending {
+  background: rgba(211, 167, 98, 0.18);
+  color: #8a6d2f;
+}
+
+.adm-receipts-badge--approved {
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+}
+
+.adm-receipts-badge--rejected {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+.adm-receipts-preview {
+  margin-top: 0.75rem;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  background: #f8fafc;
+}
+
+.adm-receipts-preview--large {
+  min-height: 280px;
+}
+
+.adm-receipts-preview-frame {
+  width: 100%;
+  min-height: 320px;
+  border: none;
+  background: #fff;
+}
+
+.adm-receipts-preview-img {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.adm-receipts-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.adm-receipts-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #193355;
+  text-decoration: none;
+}
+
+.adm-receipts-select {
+  min-width: 140px;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.78rem;
+}
+
+.adm-receipts-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: 8px;
+  background: rgba(220, 38, 38, 0.06);
+  color: #dc2626;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.adm-receipts-delete:hover {
+  background: rgba(220, 38, 38, 0.12);
+}
+
+.adm-transfers-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  min-height: 420px;
+}
+
+@media (min-width: 900px) {
+  .adm-transfers-layout {
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+.adm-transfers-clients {
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  border-radius: 12px;
+  background: #f8fafc;
+  padding: 0.75rem;
+}
+
+.adm-transfers-side-title {
+  margin: 0 0 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.adm-transfers-client-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.adm-transfers-client-btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.adm-transfers-client-btn:hover {
+  border-color: rgba(211, 167, 98, 0.35);
+}
+
+.adm-transfers-client-btn--active {
+  border-color: rgba(211, 167, 98, 0.55);
+  box-shadow: 0 4px 14px rgba(25, 51, 85, 0.06);
+}
+
+.adm-transfers-client-name {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.adm-transfers-client-email {
+  display: block;
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.15rem;
+}
+
+.adm-transfers-client-meta {
+  display: block;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-top: 0.35rem;
+}
+
+.adm-transfers-client-meta em {
+  font-style: normal;
+  color: #b45309;
+  font-weight: 600;
+}
+
+.adm-transfers-detail {
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  border-radius: 12px;
+  background: #fff;
+  padding: 1rem;
+}
+
+.adm-transfers-detail-head {
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.adm-transfers-detail-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.adm-transfers-detail-sub {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.adm-transfers-receipt-tabs {
+  list-style: none;
+  margin: 0 0 0.85rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.adm-transfers-receipt-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(25, 51, 85, 0.12);
+  background: #f8fafc;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+}
+
+.adm-transfers-receipt-tab--active {
+  border-color: rgba(211, 167, 98, 0.55);
+  background: rgba(211, 167, 98, 0.12);
+  color: #193355;
+}
+
+.adm-transfers-receipt-panel {
+  padding-top: 0.25rem;
+}
+
+/* ——— Cuentas por cobrar (listado + detalle) ——— */
+
+.adm-accounts-hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(25, 51, 85, 0.04) 0%,
+    rgba(211, 167, 98, 0.1) 100%
+  );
+  border: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.adm-accounts-hero-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #193355;
+  color: #d3a762;
+  flex-shrink: 0;
+}
+
+.adm-accounts-hero-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #193355;
+  letter-spacing: -0.02em;
+}
+
+.adm-accounts-hero-sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+  color: #64748b;
+  max-width: 42rem;
+  line-height: 1.45;
+}
+
+.adm-accounts-card {
+  border-radius: 14px;
+}
+
+.adm-accounts-progress-cell {
+  min-width: 140px;
+}
+
+.adm-accounts-progress-cell .adm-account-progress--inline {
+  margin-top: 0.45rem;
+}
+
+.adm-accounts-progress-cell .adm-account-progress-head {
+  margin-bottom: 0.25rem;
+}
+
+.adm-accounts-progress-cell .adm-account-progress-pct {
+  font-size: 0.68rem;
+}
+
+.adm-accounts-mobile-card .adm-account-progress {
+  margin: 0.65rem 0 0.25rem;
+}
+
+.adm-account-page {
+  max-width: 1200px;
+}
+
+.adm-account-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.adm-account-back:hover {
+  color: #193355;
+}
+
+.adm-account-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1.25rem 1.35rem;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  box-shadow: 0 4px 18px rgba(25, 51, 85, 0.05);
+}
+
+.adm-account-hero-kicker {
+  margin: 0 0 0.25rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d3a762;
+}
+
+.adm-account-hero-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #193355;
+  letter-spacing: -0.02em;
+}
+
+.adm-account-hero-sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.92rem;
+  color: #64748b;
+}
+
+.adm-account-progress {
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.15rem;
+  border-radius: 12px;
+  background: rgba(25, 51, 85, 0.03);
+  border: 1px solid rgba(25, 51, 85, 0.06);
+}
+
+.adm-account-progress-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  margin-bottom: 0.55rem;
+}
+
+.adm-account-progress-pct {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #193355;
+}
+
+.adm-account-progress-amounts {
+  font-size: 0.78rem;
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+
+.adm-account-progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(25, 51, 85, 0.1);
+  overflow: hidden;
+}
+
+.adm-account-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #047857 0%, #10b981 55%, #d3a762 100%);
+  transition: width 0.35s ease;
+}
+
+.adm-account-progress-balance {
+  margin: 0.55rem 0 0;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.adm-account-progress-balance strong {
+  color: #b45309;
+  font-weight: 700;
+}
+
+.adm-account-layout {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 960px) {
+  .adm-account-layout {
+    grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.adm-account-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.adm-account-meta-card,
+.adm-account-breakdown-card {
+  padding: 1.1rem 1.15rem;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  box-shadow: 0 2px 12px rgba(25, 51, 85, 0.04);
+}
+
+.adm-account-meta-title {
+  margin: 0 0 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(25, 51, 85, 0.55);
+}
+
+.adm-account-meta-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.adm-account-meta-list div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.adm-account-meta-list dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.adm-account-meta-list dd {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #193355;
+  line-height: 1.35;
+}
+
+.adm-account-meta-link {
+  display: inline-flex;
+  margin-top: 1rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #193355;
+  text-decoration: none;
+}
+
+.adm-account-meta-link:hover {
+  color: #d3a762;
+}
+
+.adm-finance-breakdown--card {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.adm-account-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.adm-finance-summary--account {
+  margin-bottom: 0;
+}
+
+.adm-finance-stat--accent {
+  background: linear-gradient(
+    145deg,
+    rgba(25, 51, 85, 0.04),
+    rgba(211, 167, 98, 0.08)
+  );
+}
+
+.adm-finance-stat--soft {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: none;
+}
+
+.adm-finance-stat--paid-border {
+  border-color: rgba(4, 120, 87, 0.22);
+}
+
+.adm-finance-stat--due-border {
+  border-color: rgba(180, 83, 9, 0.22);
+}
+
+.adm-account-panel {
+  padding: 1.15rem 1.2rem;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+  box-shadow: 0 2px 14px rgba(25, 51, 85, 0.04);
+}
+
+.adm-payment-plan {
+  margin: 0;
+  padding: 1.15rem 1.2rem;
+  border-radius: 14px;
+  border: 1px solid rgba(211, 167, 98, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(211, 167, 98, 0.07) 0%,
+    rgba(255, 255, 255, 0.95) 48%
+  );
+  box-shadow: 0 4px 16px rgba(25, 51, 85, 0.05);
+}
+
+.adm-payment-plan-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.adm-payment-plan-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(25, 51, 85, 0.08);
+  color: #193355;
+}
+
+.adm-payment-plan-chip--table {
+  font-size: 0.62rem;
+}
+
+.adm-payment-plan-next {
+  margin: 0.5rem 0 0;
+  font-size: 0.84rem;
+  color: #475569;
+}
+
+.adm-payment-plan-next strong {
+  color: #193355;
+}
+
+.adm-finance-summary--plan {
+  margin-top: 0.85rem;
+}
+
+.adm-plan-table-wrap {
+  margin-top: 1rem;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(25, 51, 85, 0.08);
+}
+
+.adm-table--plan thead th {
+  background: rgba(25, 51, 85, 0.05);
+  font-size: 0.72rem;
+}
+
+.adm-plan-seq {
+  font-weight: 700;
+  color: #193355;
+}
+
+.adm-plan-row--paid td {
+  background: rgba(4, 120, 87, 0.06) !important;
+}
+
+.adm-plan-row--partial td {
+  background: rgba(59, 130, 246, 0.06) !important;
+}
+
+.adm-plan-row--overdue td {
+  background: rgba(239, 68, 68, 0.06) !important;
+}
+
+.adm-plan-row--canceled td {
+  opacity: 0.65;
+}
+
+.adm-accounts-hero--supplier {
+  background: linear-gradient(
+    135deg,
+    rgba(180, 83, 9, 0.06) 0%,
+    rgba(25, 51, 85, 0.04) 55%,
+    rgba(211, 167, 98, 0.1) 100%
+  );
+}
+
+.adm-account-hero--supplier {
+  border-color: rgba(180, 83, 9, 0.15);
+}
+
+.adm-supplier-account-page .adm-account-progress-fill {
+  background: linear-gradient(90deg, #b45309 0%, #d97706 50%, #193355 100%);
+}
+
+.adm-breakdown-sub {
+  font-weight: 600;
+  color: #475569;
+}
+
+.adm-breakdown-desc {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #94a3b8;
+  margin-top: 0.1rem;
+}
+
+.adm-account-meta-link--secondary {
+  margin-top: 0.45rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.adm-table-wrap--sticky-actions {
+  overflow-x: auto;
+}
+
+.adm-table--supplier-payments .adm-table-actions-cell,
+.adm-table--supplier-payments thead th:last-child {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  background: #fff;
+  box-shadow: -6px 0 12px rgba(25, 51, 85, 0.06);
+  min-width: 11.5rem;
+}
+
+.adm-table--supplier-payments thead th:last-child {
+  background: #f8fafc;
+}
+
+.adm-finance-payment-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.adm-finance-inline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.adm-finance-inline-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.adm-finance-inline-btn--edit {
+  color: #92400e;
+  background: rgba(211, 167, 98, 0.15);
+  border-color: rgba(211, 167, 98, 0.45);
+}
+
+.adm-finance-inline-btn--edit:hover:not(:disabled) {
+  background: rgba(211, 167, 98, 0.28);
+}
+
+.adm-finance-inline-btn--delete {
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.adm-finance-inline-btn--delete:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.16);
+}

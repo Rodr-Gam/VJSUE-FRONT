@@ -1,0 +1,159 @@
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS PARA LA VISTA VER CIUDAD (TABLA DE DESTINOS)
+   ========================================================================== */
+
+.vc-container {
+    padding: 30px;
+    background-color: #0d0e12; /* Fondo oscuro premium */
+    min-height: 100vh;
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    color: #ffffff;
+}
+
+/* Encabezado del Control de Ciudades */
+.vc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 20px;
+}
+
+.vc-breadcrumb {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin: 0 0 5px 0;
+}
+
+.vc-breadcrumb span {
+    color: #9d4edd; /* Tu morado de acento */
+    font-weight: 500;
+}
+
+.vc-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+    background: linear-gradient(45deg, #ffffff, #a2a2a2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Contador de Ciudades en el Header */
+.vc-badge {
+    background: rgba(157, 78, 221, 0.1);
+    border: 1px solid rgba(157, 78, 221, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #b577ed;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vc-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #00f5d4; /* Punto turquesa brillante */
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px #00f5d4;
+}
+
+/* Contenedor de la Tabla (Tarjeta de Fondo) */
+.vc-card {
+    background: #161920;
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: vcFadeIn 0.4s ease;
+}
+
+/* Estilos de la Tabla */
+.vc-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.vc-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: #ffffff;
+}
+
+.vc-table th {
+    background: #111319;
+    color: #a2a2a2;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px;
+    text-align: left;
+    border-bottom: 2px solid #252936;
+}
+
+/* Redondear esquinas superiores del thead */
+.vc-table th:first-child {
+    border-top-left-radius: 10px;
+}
+.vc-table th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.vc-table td {
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+/* Filas con efecto Hover */
+.vc-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.vc-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Columna del ID Resaltada */
+.vc-id {
+    color: #9d4edd;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* Nombre del destino */
+.vc-name {
+    font-weight: 500;
+    color: #ffffff;
+}
+
+/* Fecha de Registro */
+.vc-date {
+    color: #8a8f98;
+}
+
+/* Estados de Carga y Vacíos */
+.vc-loading, .vc-empty {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+.vc-loading-spinner {
+    color: #9d4edd;
+    font-weight: 500;
+}
+
+/* Animación de entrada */
+@keyframes vcFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

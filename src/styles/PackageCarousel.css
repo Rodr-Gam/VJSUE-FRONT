@@ -1,0 +1,145 @@
+.pkg-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  border-radius: inherit;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    160deg,
+    #122540 0%,
+    #1a3352 45%,
+    #243b53 100%
+  );
+}
+
+.pkg-carousel-img {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+.pkg-carousel--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pkg-carousel--placeholder img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  opacity: 0.35;
+}
+
+.pkg-carousel-placeholder-label {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #374151;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+}
+
+.pkg-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.92);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: #193355;
+  transition: background 0.2s;
+}
+
+.pkg-carousel-btn:hover {
+  background: #fff;
+}
+
+.pkg-carousel-btn--prev {
+  left: 12px;
+}
+
+.pkg-carousel-btn--next {
+  right: 12px;
+}
+
+.pkg-carousel-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+}
+
+.pkg-carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  padding: 0;
+}
+
+.pkg-carousel-dot--active {
+  background: #d3a762;
+  transform: scale(1.15);
+}
+
+.pkg-carousel-counter {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+@media (max-width: 640px) {
+  .pkg-carousel,
+  .pkg-carousel-img {
+    min-height: 200px;
+  }
+
+  .pkg-carousel-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .pkg-carousel-btn--prev {
+    left: 8px;
+  }
+
+  .pkg-carousel-btn--next {
+    right: 8px;
+  }
+
+  .pkg-carousel-dots {
+    bottom: 10px;
+  }
+}

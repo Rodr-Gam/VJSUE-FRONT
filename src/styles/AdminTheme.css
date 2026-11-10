@@ -1,0 +1,225 @@
+/* Tema global del panel admin */
+
+@import "./AdminResponsive.css";
+@import "./AdminList.css";
+@import "./AdminForm.css";
+@import "./AdminFinance.css";
+@import "./AdminExpediente.css";
+
+.al-content {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: #193355;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -20%, rgba(211, 167, 98, 0.1), transparent),
+    #eef1f6;
+}
+
+/* al-content-inner defined in AdminResponsive + theme */
+
+/* Sidebar legibilidad */
+.al-nav-section {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.al-nav-item {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.al-nav-item:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.al-nav-item--active {
+  color: #fff !important;
+  background: rgba(211, 167, 98, 0.18) !important;
+  border-color: rgba(211, 167, 98, 0.35) !important;
+}
+
+.al-nav-subitem {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.al-nav-subitem:hover,
+.al-nav-subitem--active {
+  color: #fff !important;
+}
+
+.al-brand-name {
+  color: #e8c98a !important;
+}
+
+.al-brand-role {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.al-avatar-name {
+  color: #fff !important;
+}
+
+/* Badges extra */
+.adm-badge--pending {
+  background: rgba(234, 179, 8, 0.15);
+  color: #a16207;
+}
+
+.adm-badge--confirmed,
+.adm-badge--paid {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+
+.adm-badge--cancelled {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+.adm-badge--finished {
+  background: rgba(100, 116, 139, 0.15);
+  color: #475569;
+}
+
+.adm-badge--info {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+}
+
+.adm-toolbar-2 {
+  grid-template-columns: 1fr !important;
+}
+
+@media (min-width: 768px) {
+  .adm-toolbar-2 {
+    grid-template-columns: 1.5fr 1fr auto !important;
+  }
+
+  .adm-toolbar-3 {
+    grid-template-columns: 1.2fr 1fr 1fr auto !important;
+  }
+
+  .adm-toolbar-4 {
+    grid-template-columns: 1.2fr 1fr 1fr 1fr auto !important;
+  }
+}
+
+.adm-list-cta--ghost {
+  background: #fff;
+  color: #193355;
+  border: 1.5px solid rgba(25, 51, 85, 0.15);
+}
+
+.adm-list-cta--ghost:hover {
+  background: #f8fafc;
+}
+
+.adm-list-cta--danger {
+  background: #c93a47;
+}
+
+.adm-list-cta--danger:hover {
+  background: #b0323e;
+}
+
+.adm-link-clear {
+  align-self: flex-start;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c93a47;
+  background: none;
+  border: 1.5px solid rgba(201, 58, 71, 0.35);
+  border-radius: 10px;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.adm-link-clear:hover {
+  background: rgba(201, 58, 71, 0.06);
+  border-color: #c93a47;
+}
+
+.adm-list-alert {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #b91c1c;
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+}
+
+.adm-list-alert button {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  color: inherit;
+  font-weight: 600;
+}
+
+.adm-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.adm-pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0.35rem;
+  border: 1px solid rgba(25, 51, 85, 0.15);
+  border-radius: 10px;
+  background: #fff;
+  color: #193355;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.adm-pagination-btn:hover:not(:disabled) {
+  background: rgba(211, 167, 98, 0.12);
+}
+
+.adm-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.adm-pagination-label {
+  font-size: 0.88rem;
+  color: #64748b;
+}
+
+.adm-cell-notes {
+  max-width: 120px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  word-break: break-word;
+}
+
+.adm-table--md {
+  min-width: 720px;
+}
+
+.adm-table--lg {
+  min-width: 980px;
+}
+
+.adm-table--xl {
+  min-width: 1100px;
+}
+
+.adm-cell-muted {
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.adm-cell-strong {
+  font-weight: 700;
+  color: #193355;
+}

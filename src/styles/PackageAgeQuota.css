@@ -1,0 +1,105 @@
+/* Cupos por edad — catálogo y detalle */
+
+.pkg-age-quota--catalog {
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 30, 62, 0.04) 0%,
+    rgba(211, 167, 98, 0.08) 100%
+  );
+  border: 1px solid rgba(0, 30, 62, 0.07);
+}
+
+.pkg-age-quota--detail {
+  margin-top: 0.15rem;
+}
+
+.pkg-age-quota-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-on-surface-variant, #43474e);
+}
+
+.pkg-age-quota-heading svg {
+  color: var(--color-prestige-gold, #d3a762);
+  flex-shrink: 0;
+}
+
+.pkg-age-quota-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.pkg-age-quota-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: white;
+  border: 1px solid rgba(0, 30, 62, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 30, 62, 0.05);
+}
+
+.pkg-age-quota-chip-num {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--color-primary, #001e3e);
+  line-height: 1;
+}
+
+.pkg-age-quota-chip-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-surface-deep, #193355);
+  letter-spacing: 0.02em;
+}
+
+.pkg-age-quota-total {
+  margin: 0.45rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-on-surface-variant, #43474e);
+  opacity: 0.85;
+}
+
+.pkg-age-quota--soldout .pkg-age-quota-soldout {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-cta-coral, #c93a47);
+}
+
+/* Detalle: chips más compactos dentro del stat */
+.rp-stat .pkg-age-quota--detail .pkg-age-quota-heading {
+  margin-bottom: 0.35rem;
+  font-size: 0.6rem;
+}
+
+.rp-stat .pkg-age-quota-chip {
+  padding: 0.28rem 0.55rem;
+}
+
+.rp-stat .pkg-age-quota-chip-num {
+  font-size: 0.88rem;
+}
+
+.rp-stat--alert .pkg-age-quota-chip {
+  border-color: rgba(201, 58, 71, 0.25);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.rp-stat--alert .pkg-age-quota-chip-num {
+  color: #c93a47;
+}
