@@ -427,12 +427,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
         {/*--------------Privadas Cliente--------------*/}
         <Route
-          path="/cliente/dashboard"
+          path="/cliente/inicio"
           element={
             <ClienteRoute>
               <GenCliente />
             </ClienteRoute>
           }
+        />
+        <Route
+          path="/cliente/dashboard"
+          element={<Navigate to="/cliente/inicio" replace />}
         />
         <Route
           path="/cliente/reservar/:id"

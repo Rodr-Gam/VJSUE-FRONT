@@ -8,8 +8,11 @@ import {
   ArrowBigLeftIcon,
 } from "lucide-react";
 import AdminLayout from "../../../layouts/AdminLayout";
+import LoadingScreen from "../../../components/Admin/LoadingScreen";
 import ReservationDocuments from "../../../components/Admin/ReservationDocuments";
 import FinancePanel from "../../../components/Admin/finance/FinancePanel";
+import FlexibleReservationForm from "../../../components/Admin/reservations/FlexibleReservationForm";
+import { EDIT_QUICK_RESERVATION_FORM_CONFIG } from "../../../config/flexibleReservationConfig";
 import "../../../styles/VerReserva.css";
 import {
   toDateInputValue,
@@ -35,6 +38,9 @@ interface Reservation {
   juniors: number;
   children: number;
   observations: string;
+  unit_price_adult?: number | string;
+  unit_price_junior?: number | string;
+  unit_price_child?: number | string;
 }
 
 interface Package extends PackageOption {
@@ -44,6 +50,8 @@ interface Package extends PackageOption {
   price_adult: number;
   price_junior: number;
   price_child: number;
+  status?: "active" | "inactive";
+  is_private?: boolean;
 }
 
 const EMPTY_RESERVATION: Reservation = {
@@ -60,14 +68,34 @@ const EMPTY_RESERVATION: Reservation = {
   observations: "",
 };
 
-export default function EditarReserva() {
+function usesFullQuickEdit(data: {
+  package?: { is_private?: boolean };
+  flight?: unknown;
+  hotel?: unknown;
+  transport?: unknown;
+  passengers?: unknown[];
+}): boolean {
+  return (
+    !!data.package?.is_private ||
+    !!data.flight ||
+    !!data.hotel ||
+    !!data.transport ||
+    (data.passengers?.length ?? 0) > 0
+  );
+}
+
+function CatalogReservationEditor({ id }: { id: string }) {
   const nav = useNavigate();
-  const { id } = useParams();
   const [packageSearch, setPackageSearch] = useState("");
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(false);
   const [reservation, setReservation] =
     useState<Reservation>(EMPTY_RESERVATION);
+  const [priceOverride, setPriceOverride] = useState({
+    adult: 0,
+    junior: 0,
+    child: 0,
+  });
   const [originalReservation, setOriginalReservation] = useState<{
     package_id: number;
     reserved_seats: number;
@@ -83,10 +111,6 @@ export default function EditarReserva() {
     children: reservation.children,
   };
 
-  // Si el paquete no cambió respecto al original, le devolvemos a stockReal
-  // los lugares que esta misma reserva ya tenía ocupados. reserved_seats
-  // YA ES el total (adults + juniors + children) calculado por el backend,
-  // así que no hay que sumarlo aparte — eso era el bug de doble conteo.
   const mismoPackage =
     originalReservation?.package_id === reservation.package_id;
   const reservedCapacity =
@@ -94,25 +118,50 @@ export default function EditarReserva() {
       ? originalReservation.reserved_seats
       : 0;
 
-  const {
-    selectedPkgObj,
-    prices,
-    totalPassengers,
-    previewTotal,
-    stockReal,
-    maxFor,
-  } = usePackagePassengers({
-    packages,
-    packageId: reservation.package_id,
-    counts,
-    reservedSeats: reservation.reserved_seats,
-    reservedCapacity,
-  });
+  const { selectedPkgObj, prices, totalPassengers, previewTotal, stockReal, maxFor } =
+    usePackagePassengers({
+      packages,
+      packageId: reservation.package_id,
+      counts,
+      reservedSeats: reservation.reserved_seats,
+      reservedCapacity,
+    });
+
+  const displayPrices = selectedPkgObj
+    ? prices
+    : {
+        adult: priceOverride.adult,
+        junior: priceOverride.junior,
+        child: priceOverride.child,
+      };
+
+  const displayPreview =
+    selectedPkgObj ?
+      previewTotal
+    : counts.adults * displayPrices.adult +
+      counts.juniors * displayPrices.junior +
+      counts.children * displayPrices.child;
 
   const cargarReserva = async () => {
     try {
       const response = await api.get(`/reservations/${id}`);
       const data = response.data;
+
+      if (data.package) {
+        setPackages((prev) => {
+          const exists = prev.some((p) => p.id === data.package.id);
+          if (exists) return prev;
+          return [
+            ...prev,
+            {
+              ...data.package,
+              price_adult: Number(data.package.price_adult),
+              price_junior: Number(data.package.price_junior),
+              price_child: Number(data.package.price_child),
+            },
+          ];
+        });
+      }
 
       setReservation({
         user: data.user,
@@ -123,12 +172,18 @@ export default function EditarReserva() {
         return_date: resolveReservationReturnDate(data) ?? "",
         state: data.state,
         reserved_seats: data.reserved_seats ?? 0,
-        // Si la reserva no tiene desglose (legacy), la tratamos como
-        // todos adultos, igual que hace normalizePassengers() en el backend.
         adults: data.adults ?? data.reserved_seats ?? 0,
         juniors: data.juniors ?? 0,
         children: data.children ?? 0,
         observations: data.observations,
+        unit_price_adult: data.unit_price_adult,
+        unit_price_junior: data.unit_price_junior,
+        unit_price_child: data.unit_price_child,
+      });
+      setPriceOverride({
+        adult: Number(data.unit_price_adult ?? data.package?.price_adult ?? 0),
+        junior: Number(data.unit_price_junior ?? data.package?.price_junior ?? 0),
+        child: Number(data.unit_price_child ?? data.package?.price_child ?? 0),
       });
       setOriginalReservation({
         package_id: data.package_id,
@@ -142,7 +197,14 @@ export default function EditarReserva() {
   const cargarPaquetes = async () => {
     try {
       const response = await api.get("/packages");
-      setPackages(response.data);
+      setPackages((prev) => {
+        const fromApi: Package[] = response.data;
+        const merged = [...fromApi];
+        for (const p of prev) {
+          if (!merged.some((m) => m.id === p.id)) merged.push(p);
+        }
+        return merged;
+      });
     } catch (error) {
       console.error("Error al cargar paquetes:", error);
     }
@@ -166,8 +228,6 @@ export default function EditarReserva() {
       package_id: pkg.id,
       departure_date: fullPkg ? toDateInputValue(fullPkg.departure_date) : "",
       return_date: fullPkg ? resolvePackageReturnDate(fullPkg) : "",
-      // Reseteamos pasajeros al cambiar de paquete: el stock y los
-      // precios del paquete nuevo no tienen relación con los del anterior.
       reserved_seats: 0,
       adults: 0,
       juniors: 0,
@@ -179,12 +239,9 @@ export default function EditarReserva() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // El desglose de pasajeros siempre está visible al editar, así que
-    // la validación siempre usa totalPassengers, sin importar el tipo
-    // de paquete.
     const errorValidacion = validateReservationSeats({
-      hasPackage: !!selectedPkgObj,
-      isPrivatePackage: true,
+      hasPackage: !!selectedPkgObj || reservation.package_id > 0,
+      isPrivatePackage: selectedPkgObj?.status === "inactive",
       seatsUsed: totalPassengers,
       stockReal,
       totalPassengers,
@@ -198,7 +255,7 @@ export default function EditarReserva() {
 
     try {
       setLoading(true);
-      const payload = {
+      await api.put(`/reservations/${id}`, {
         package_id: reservation.package_id,
         reference_person: reservation.reference_person,
         reservation_date: reservation.reservation_date,
@@ -206,21 +263,13 @@ export default function EditarReserva() {
         return_date: reservation.return_date,
         state: reservation.state,
         observations: reservation.observations,
-        // Siempre mandamos el desglose completo, sin importar si el
-        // paquete es público o privado — el precio siempre depende
-        // de la mezcla real de adultos/juniors/niños.
         adults: reservation.adults,
         juniors: reservation.juniors,
         children: reservation.children,
-      };
-
-      await api.put(`/reservations/${id}`, payload);
+      });
 
       setMensaje({ texto: "Reserva actualizada con éxito.", tipo: "success" });
-
-      setTimeout(() => {
-        nav("/admin/ver-reserva");
-      }, 1500);
+      setTimeout(() => nav("/admin/ver-reserva"), 1500);
     } catch (error) {
       console.error("Error al actualizar la reserva:", error);
       setMensaje({ texto: "Error al actualizar la reserva.", tipo: "error" });
@@ -360,17 +409,15 @@ export default function EditarReserva() {
                         observations: e.target.value,
                       })
                     }
-                  ></textarea>
+                  />
                 </label>
               </div>
 
               <div className="R-card-f">
-                {/* El desglose de pasajeros siempre está visible al editar,
-                    sin importar si el paquete es público o privado. */}
                 <PassengerFields
-                  isPrivatePackage={true}
+                  isPrivatePackage={selectedPkgObj?.status === "inactive"}
                   counts={counts}
-                  prices={prices}
+                  prices={displayPrices}
                   maxFor={maxFor}
                   onAdultsChange={(v) =>
                     setReservation({ ...reservation, adults: v })
@@ -385,7 +432,7 @@ export default function EditarReserva() {
                   onReservedSeatsChange={(v) =>
                     setReservation({ ...reservation, reserved_seats: v })
                   }
-                  previewTotal={previewTotal}
+                  previewTotal={displayPreview}
                 />
               </div>
 
@@ -409,19 +456,59 @@ export default function EditarReserva() {
             </form>
           </div>
 
-          {id && (
-            <div className="R-card-f mt-4">
-              <FinancePanel reservationId={Number(id)} />
-            </div>
-          )}
-
-          {id && (
-            <div className="R-card-f mt-4">
-              <ReservationDocuments reservationId={Number(id)} />
-            </div>
-          )}
+          <div className="R-card-f mt-4">
+            <FinancePanel reservationId={Number(id)} />
+          </div>
+          <div className="R-card-f mt-4">
+            <ReservationDocuments reservationId={Number(id)} />
+          </div>
         </div>
       </div>
     </AdminLayout>
   );
+}
+
+export default function EditarReserva() {
+  const { id } = useParams();
+  const [mode, setMode] = useState<"loading" | "quick" | "catalog">("loading");
+
+  useEffect(() => {
+    if (!id) {
+      setMode("catalog");
+      return;
+    }
+    api
+      .get(`/reservations/${id}`)
+      .then((res) => {
+        setMode(usesFullQuickEdit(res.data) ? "quick" : "catalog");
+      })
+      .catch(() => setMode("catalog"));
+  }, [id]);
+
+  if (!id) {
+    return (
+      <AdminLayout>
+        <p className="p-4">Reserva no válida.</p>
+      </AdminLayout>
+    );
+  }
+
+  if (mode === "loading") {
+    return (
+      <AdminLayout>
+        <LoadingScreen icon={NotebookPenIcon} text="Cargando reserva..." />
+      </AdminLayout>
+    );
+  }
+
+  if (mode === "quick") {
+    return (
+      <FlexibleReservationForm
+        config={EDIT_QUICK_RESERVATION_FORM_CONFIG}
+        editReservationId={Number(id)}
+      />
+    );
+  }
+
+  return <CatalogReservationEditor id={id} />;
 }

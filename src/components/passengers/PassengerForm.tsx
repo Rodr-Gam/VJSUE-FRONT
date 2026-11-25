@@ -269,7 +269,7 @@ export default function PassengerForm({
             ? "Guardando..."
             : isEdit
               ? "Guardar cambios"
-              : "Registrar pasajero"}
+              : "Guardar datos"}
         </button>
       </div>
     </form>

@@ -4,8 +4,7 @@ import type { Reservation } from "../types/reservation";
 import type { Account, ScheduledPayment } from "../types/finance";
 import type { Passenger } from "../types/passenger";
 import {
-  buildServiceCostLines,
-  computePackageSubtotal,
+  buildPdfPaymentCostRows,
   computeReservationDisplayTotal,
   formatMXN,
   formatPassengerSummary,
@@ -18,6 +17,7 @@ import {
   getHotelCheckInOutLabel,
   getHotelDestinationLabel,
 } from "./reservationServices";
+import { drawFlightChangeDisclaimer } from "./pdfFlightDisclaimer";
 
 type ReservationPdfSource = Reservation & {
   user?: { name?: string; last_name?: string; email?: string };
@@ -217,8 +217,7 @@ export function generateReservationPdf(
   const packageName = reservation.package?.name ?? "Paquete";
   const counts = getReservationPassengerCounts(reservation);
   const displayTotal = computeReservationDisplayTotal(reservation);
-  const packageSubtotal = computePackageSubtotal(reservation);
-  const serviceLines = buildServiceCostLines(reservation);
+  const paymentRows = buildPdfPaymentCostRows(reservation);
 
   const accountTotal = account
     ? Number(account.total_amount) || displayTotal
@@ -301,14 +300,16 @@ export function generateReservationPdf(
   y = ensureSpace(doc, y, 14);
   autoTable(doc, {
     ...baseTableOptions(y),
-    head: [["Concepto", "Importe"]],
-    body: [
-      ["Paquete", formatMXN(packageSubtotal)],
-      ...serviceLines.map((line) => [line.label, formatMXN(line.amount)]),
-    ],
+    head: [["Concepto", "Costo por persona", "Importe"]],
+    body: paymentRows.map((row) => [
+      row.concept,
+      row.perPersonDetail,
+      formatMXN(row.amount),
+    ]),
     columnStyles: {
-      0: { cellWidth: 130 },
-      1: { halign: "right", fontStyle: "bold" },
+      0: { cellWidth: 58 },
+      1: { cellWidth: 72, fontSize: 8.5, textColor: MUTED },
+      2: { halign: "right", fontStyle: "bold", cellWidth: 52 },
     },
   });
   y = tableFinalY(doc) + 4;
@@ -346,6 +347,8 @@ export function generateReservationPdf(
       },
     });
   }
+
+  y = drawFlightChangeDisclaimer(doc, y, PAGE_MARGIN, CONTENT_WIDTH);
 
   const pageCount = doc.getNumberOfPages();
   for (let page = 1; page <= pageCount; page += 1) {

@@ -42,9 +42,7 @@ import { PACKAGE_IMAGE_ACCEPT } from "../../../types/package";
 
 import { toDateInputValue, validateTripDates } from "../../../utils/packageDates";
 
-import PackagePriceBreakdownFields, {
-  getPackagePriceBreakdownError,
-} from "../../../components/Admin/packages/PackageInfoPriceFields";
+import PackagePriceBreakdownFields from "../../../components/Admin/packages/PackageInfoPriceFields";
 import ServiceFinanceFields from "../../../components/Admin/ServiceFinanceFields";
 import {
   calcSupplierPaymentFromPlatformCost,
@@ -333,22 +331,6 @@ export default function EditarPaquete() {
         texto: "Indica al menos un cupo (adulto, juvenil o niño).",
         tipo: "error",
       });
-      return;
-    }
-
-    const priceBreakdownError = getPackagePriceBreakdownError(
-      {
-        packageTotalCost,
-        priceAdult,
-        priceJunior,
-        priceChild,
-        passengerCounts,
-      },
-      true,
-    );
-
-    if (priceBreakdownError) {
-      setMensaje({ texto: priceBreakdownError, tipo: "error" });
       return;
     }
 
@@ -1090,7 +1072,8 @@ export default function EditarPaquete() {
 
                   <p className="qr-section-desc">
 
-                    Imágenes adicionales para el carrusel en el sitio público.
+                    Imágenes adicionales para el carrusel en el sitio público. Se
+                    guardan en 1920×1080 px (16:9).
 
                   </p>
 

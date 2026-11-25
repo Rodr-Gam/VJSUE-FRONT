@@ -99,7 +99,35 @@
 
 .id-google-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.id-google-accounts {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.id-google-accounts li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.id-google-account-count {
+  margin-top: 0.35rem !important;
+  font-size: 0.78rem !important;
+}
+
+.id-btn--compact {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.75rem;
 }
 
 .id-btn {

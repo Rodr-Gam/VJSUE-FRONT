@@ -33,7 +33,7 @@ export default function FormFechaImportante() {
   const [eventDate, setEventDate] = useState("");
   const [observation, setObservation] = useState("");
   const [reminderPreset, setReminderPreset] = useState<ReminderPreset>("one_day");
-  const [reminderDays, setReminderDays] = useState("3");
+  const [reminderOnDate, setReminderOnDate] = useState("");
   const [reminderTime, setReminderTime] = useState("09:00");
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
@@ -51,7 +51,16 @@ export default function FormFechaImportante() {
         setEventDate(data.event_date);
         setObservation(data.observation ?? "");
         setReminderPreset(data.reminder_preset);
-        setReminderDays(String(data.reminder_days_before ?? 3));
+        const fallbackReminder = data.reminder_on_date
+          ? data.reminder_on_date
+          : data.event_date && data.reminder_days_before != null
+            ? (() => {
+                const d = new Date(`${data.event_date}T12:00:00`);
+                d.setDate(d.getDate() - Number(data.reminder_days_before));
+                return d.toISOString().slice(0, 10);
+              })()
+            : "";
+        setReminderOnDate(fallbackReminder);
         setReminderTime(data.reminder_time ?? "09:00");
         if (data.user) {
           setClient({
@@ -84,8 +93,8 @@ export default function FormFechaImportante() {
         event_date: eventDate,
         observation: observation.trim() || undefined,
         reminder_preset: reminderPreset,
-        reminder_days_before:
-          reminderPreset === "custom" ? Number(reminderDays) : null,
+        reminder_on_date:
+          reminderPreset === "custom" ? reminderOnDate || undefined : null,
         reminder_time: reminderPreset === "custom" ? reminderTime : null,
       };
 
@@ -112,6 +121,13 @@ export default function FormFechaImportante() {
       setClient(null);
     }
   }, [isInformative, client]);
+
+  useEffect(() => {
+    if (reminderPreset !== "custom" || !eventDate || !reminderOnDate) return;
+    if (reminderOnDate > eventDate) {
+      setReminderOnDate(eventDate);
+    }
+  }, [eventDate, reminderOnDate, reminderPreset]);
 
   const pageTitle = isEdit
     ? "Editar fecha importante"
@@ -237,7 +253,8 @@ export default function FormFechaImportante() {
             <div className="id-form-section id-form-section--reminder">
               <h2 className="id-form-section-title">Recordatorio</h2>
               <p className="id-form-section-desc">
-                Elige cuándo quieres recibir el aviso en Google Calendar.
+                Elige cuándo quieres recibir el aviso en Google Calendar. Horario
+                de referencia: <strong>Guadalajara, Jalisco</strong> (centro de México).
               </p>
 
               <div className="id-reminder-grid" role="radiogroup" aria-label="Anticipación del recordatorio">
@@ -265,24 +282,28 @@ export default function FormFechaImportante() {
               {reminderPreset === "custom" && (
                 <div className="id-custom-reminder">
                   <div className="id-form-field">
-                    <label className="id-form-label" htmlFor="id-reminder-days">
-                      Días de anticipación
+                    <label className="id-form-label" htmlFor="id-reminder-on-date">
+                      Fecha del aviso
                     </label>
                     <input
-                      id="id-reminder-days"
-                      type="number"
-                      min={0}
-                      max={365}
-                      className="id-form-control"
-                      value={reminderDays}
-                      onChange={(e) => setReminderDays(e.target.value)}
+                      id="id-reminder-on-date"
+                      type="date"
+                      className="id-form-control id-form-control--date"
+                      value={reminderOnDate}
+                      max={eventDate || undefined}
+                      onChange={(e) => setReminderOnDate(e.target.value)}
                       required
-                      disabled={saving}
+                      disabled={saving || !eventDate}
                     />
+                    {!eventDate && (
+                      <p className="id-form-hint">
+                        Primero elige la fecha importante arriba.
+                      </p>
+                    )}
                   </div>
                   <div className="id-form-field">
                     <label className="id-form-label" htmlFor="id-reminder-time">
-                      Hora de la notificación
+                      Hora de la notificación (Guadalajara)
                     </label>
                     <input
                       id="id-reminder-time"

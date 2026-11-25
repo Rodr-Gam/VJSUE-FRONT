@@ -16,6 +16,7 @@ import {
 import { getReservationStateLabel } from "../../utils/reservationStatus";
 import "../../styles/Cliente.css";
 import "../../styles/Passengers.css";
+import { CLIENT_HOME_PATH } from "../../constants/clientPaths";
 
 const PASSENGER_CONTACT_NOTICE =
   "Si deseas modificar o eliminar los datos de un pasajero registrado, favor de comunicarte con nosotros.";
@@ -100,8 +101,8 @@ export default function GestionarPasajeros() {
         <main className="pg-page">
           <div className="pg-container pg-container--empty">
             <p className="pg-error">{error ?? "Reserva no encontrada."}</p>
-            <Link to="/cliente/dashboard" className="pg-btn pg-btn--primary">
-              Volver a mis reservas
+            <Link to={CLIENT_HOME_PATH} className="pg-btn pg-btn--primary">
+              Volver al inicio
             </Link>
           </div>
         </main>
@@ -119,9 +120,9 @@ export default function GestionarPasajeros() {
       <NavPrivClient />
       <main className="pg-page">
         <div className="pg-container">
-          <Link to="/cliente/dashboard" className="dr-back-link">
+          <Link to={CLIENT_HOME_PATH} className="dr-back-link">
             <ArrowLeft size={16} aria-hidden="true" />
-            Mis reservas
+            Inicio
           </Link>
 
           <header className="pg-header">
@@ -153,14 +154,19 @@ export default function GestionarPasajeros() {
           </div>
 
           {canAdd && progress.hasSlotsAvailable && !showForm && (
-            <button
-              type="button"
-              className="pg-btn pg-btn--primary pg-add-btn"
-              onClick={openAddForm}
-            >
-              <Plus size={18} aria-hidden="true" />
-              Agregar pasajero
-            </button>
+            <div className="pg-add-row">
+              <p className="pg-add-hint">
+                Presiona aquí para registrar los nombres de los pasajeros
+              </p>
+              <button
+                type="button"
+                className="pg-btn pg-btn--primary pg-add-btn"
+                onClick={openAddForm}
+              >
+                <Plus size={18} aria-hidden="true" />
+                Agregar pasajero
+              </button>
+            </div>
           )}
 
           {canAdd && showForm && (
@@ -204,8 +210,8 @@ export default function GestionarPasajeros() {
             >
               Ver detalle de reserva
             </Link>
-            <Link to="/cliente/dashboard" className="pg-btn pg-btn--primary">
-              Ir al dashboard
+            <Link to={CLIENT_HOME_PATH} className="pg-btn pg-btn--primary">
+              Ir al inicio
             </Link>
           </div>
         </div>

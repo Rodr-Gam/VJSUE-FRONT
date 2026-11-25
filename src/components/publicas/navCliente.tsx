@@ -1,7 +1,8 @@
 import "../../styles/landingCliente/header.css";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { Menu, X, LayoutDashboard, UserRound } from "lucide-react";
+import { Menu, X, Home, LayoutDashboard, UserRound } from "lucide-react";
+import { CLIENT_HOME_PATH } from "../../constants/clientPaths";
 import Logo from "../../assets/LogoViajes512x512.png";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -35,7 +36,7 @@ export default function Header({ scrolled = false }: HeaderProps) {
 
     if (isCliente) {
       return {
-        primary: { to: "/cliente/dashboard", label: "Mis reservas", icon: LayoutDashboard },
+        primary: { to: CLIENT_HOME_PATH, label: "Inicio", icon: Home },
         secondary: { to: "/perfil", label: "Mi perfil", icon: UserRound },
       };
     }

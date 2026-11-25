@@ -1,5 +1,7 @@
 import { api } from "./api";
 import type { PackageImage, TravelPackage } from "./types/package";
+import { isPackagePubliclyBookable } from "./utils/packagePublicBookable";
+import { toDateInputValue } from "./utils/packageDates";
 
 function unwrapPackages(data: unknown): TravelPackage[] {
   if (Array.isArray(data)) return data;
@@ -37,7 +39,13 @@ export const packageService = {
 
   getPublicPackages: async (): Promise<TravelPackage[]> => {
     const response = await api.get("/packages/public");
-    return unwrapPackages(response.data);
+    return unwrapPackages(response.data)
+      .filter(isPackagePubliclyBookable)
+      .sort((a, b) => {
+        const da = toDateInputValue(a.departure_date) || "9999-12-31";
+        const db = toDateInputValue(b.departure_date) || "9999-12-31";
+        return da.localeCompare(db);
+      });
   },
 
   getPublicPackageById: async (id: number): Promise<TravelPackage | null> => {

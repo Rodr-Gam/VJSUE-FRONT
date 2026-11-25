@@ -242,6 +242,22 @@
   cursor: default !important;
 }
 
+/* Autocompletado en rejilla: en flujo para no tapar la fila siguiente */
+.qr-dropdown--in-flow {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  width: 100%;
+  margin-top: 0.35rem;
+  z-index: auto;
+}
+
+.qr-autocomplete-field {
+  position: relative;
+  min-width: 0;
+}
+
 .qr-passenger-row {
   display: grid;
   grid-template-columns: 1fr;
@@ -646,6 +662,22 @@
   border: 1px solid rgba(25, 51, 85, 0.08);
   border-left: 3px solid rgba(211, 167, 98, 0.75);
   box-shadow: 0 2px 10px rgba(25, 51, 85, 0.04);
+}
+
+.qr-page .qr-pricing-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.qr-page .qr-hotel-before-pricing {
+  margin: 0;
+  padding: 1rem 1.1rem 1.05rem;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(25, 51, 85, 0.1);
+  border-left: 3px solid rgba(211, 167, 98, 0.55);
+  box-shadow: 0 4px 16px rgba(25, 51, 85, 0.05);
 }
 
 .qr-page .qr-pricing-panel {

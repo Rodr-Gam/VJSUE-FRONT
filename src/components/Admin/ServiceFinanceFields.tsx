@@ -19,6 +19,10 @@ export interface ServiceFinanceFieldsProps {
   /** Si true, el pago a proveedor se calcula fuera y no se edita a mano. */
   supplierPaymentFromPlatform?: boolean;
   platformProfitPercent?: PlatformProfitPercent;
+  /** Precios por persona (vuelo / transporte). */
+  perPerson?: boolean;
+  passengerCount?: number;
+  onPassengerCountChange?: (value: number) => void;
 }
 
 export default function ServiceFinanceFields({
@@ -34,18 +38,50 @@ export default function ServiceFinanceFields({
   clientHint,
   supplierPaymentFromPlatform = false,
   platformProfitPercent = 17,
+  perPerson = false,
+  passengerCount = 1,
+  onPassengerCountChange,
 }: ServiceFinanceFieldsProps) {
-  const ganancia = calcGanancia(clientCost, supplierPayment);
+  const count = Math.max(1, Math.floor(passengerCount) || 1);
+  const unitClient = parseFloat(clientCost) || 0;
+  const unitSupplier = parseFloat(supplierPayment) || 0;
+  const totalClient = Math.round(unitClient * count * 100) / 100;
+  const totalSupplier = Math.round(unitSupplier * count * 100) / 100;
+  const ganancia = calcGanancia(
+    perPerson ? String(totalClient) : clientCost,
+    perPerson ? String(totalSupplier) : supplierPayment,
+  );
   const gananciaLibre = calcGananciaLibre(
-    clientCost,
-    supplierPayment,
+    perPerson ? String(totalClient) : clientCost,
+    perPerson ? String(totalSupplier) : supplierPayment,
     bonusDiscount,
   );
 
   return (
     <div className="qr-service-finance">
+      {perPerson && onPassengerCountChange ? (
+        <label className="R-label">
+          Cuántas personas
+          <input
+            type="number"
+            min={1}
+            step={1}
+            className="R-input"
+            value={count}
+            onChange={(e) =>
+              onPassengerCountChange(Math.max(1, Number(e.target.value) || 1))
+            }
+            disabled={disabled}
+          />
+          <span className="qr-field-hint">
+            Cobro y proveedor abajo son <strong>por persona</strong>; los totales
+            se calculan solos.
+          </span>
+        </label>
+      ) : null}
+
       <label className="R-label">
-        Precio cliente
+        {perPerson ? "Precio cliente (por persona)" : "Precio cliente"}
         <input
           type="number"
           step="0.01"
@@ -58,11 +94,15 @@ export default function ServiceFinanceFields({
         />
         {clientHint ? (
           <span className="qr-field-hint">{clientHint}</span>
+        ) : perPerson && unitClient > 0 ? (
+          <span className="qr-field-hint">
+            Total cobro: ${totalClient.toFixed(2)} ({count} × ${unitClient.toFixed(2)})
+          </span>
         ) : null}
       </label>
 
       <label className="R-label">
-        Cuánto pagaré a proveedor
+        {perPerson ? "Cuánto pagaré a proveedor (por persona)" : "Cuánto pagaré a proveedor"}
         <input
           type="number"
           step="0.01"
@@ -83,6 +123,11 @@ export default function ServiceFinanceFields({
           <span className="qr-field-hint">
             Costo real plataforma − ganancia ({platformProfitPercent}%), calculado
             automáticamente.
+          </span>
+        ) : perPerson && unitSupplier > 0 ? (
+          <span className="qr-field-hint">
+            Total proveedor: ${totalSupplier.toFixed(2)} ({count} × $
+            {unitSupplier.toFixed(2)})
           </span>
         ) : null}
       </label>

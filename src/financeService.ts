@@ -14,6 +14,7 @@ import type {
   UpdateAccountPayload,
   UpdateScheduledPaymentPayload,
   PaginationMeta,
+  PassengerLedger,
 } from "./types/finance";
 
 export function getFinanceErrorMessage(
@@ -276,5 +277,26 @@ export const financeService = {
     await api.delete(
       `/accounts/${accountId}/scheduled-payments/${scheduledId}`,
     );
+  },
+
+  async getPassengerLedger(accountId: number): Promise<PassengerLedger> {
+    const { data } = await api.get(`/accounts/${accountId}/passenger-shares`);
+    return data as PassengerLedger;
+  },
+
+  async savePassengerShares(
+    accountId: number,
+    payload:
+      | { mode: "equal" }
+      | {
+          mode: "custom";
+          shares: { passenger_id: number; amount_due: number }[];
+        },
+  ): Promise<PassengerLedger> {
+    const { data } = await api.put(
+      `/accounts/${accountId}/passenger-shares`,
+      payload,
+    );
+    return (data as { passenger_ledger: PassengerLedger }).passenger_ledger;
   },
 };

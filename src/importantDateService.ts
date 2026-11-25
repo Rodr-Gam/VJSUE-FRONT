@@ -95,11 +95,22 @@ export const importantDateService = {
     await api.delete(`/important-dates/${id}`);
   },
 
-  async sync(id: number): Promise<ImportantDate> {
-    const { data } = await api.post<{ important_date: ImportantDate }>(
+  async sync(id: number): Promise<{ message: string; important_date: ImportantDate }> {
+    const { data } = await api.post<{ message: string; important_date: ImportantDate }>(
       `/important-dates/${id}/sync`,
     );
-    return data.important_date;
+    return data;
+  },
+
+  async syncAll(): Promise<{
+    message: string;
+    summary: { total: number; synced: number; partial: number; failed: number; skipped: number };
+  }> {
+    const { data } = await api.post<{
+      message: string;
+      summary: { total: number; synced: number; partial: number; failed: number; skipped: number };
+    }>("/important-dates/sync-all");
+    return data;
   },
 
   async googleStatus(): Promise<GoogleCalendarStatus> {
@@ -112,7 +123,9 @@ export const importantDateService = {
     return data.url;
   },
 
-  async googleDisconnect(): Promise<void> {
-    await api.delete("/google-calendar/connection");
+  async googleDisconnect(connectionId?: number): Promise<void> {
+    await api.delete("/google-calendar/connection", {
+      params: connectionId != null ? { connection_id: connectionId } : undefined,
+    });
   },
 };

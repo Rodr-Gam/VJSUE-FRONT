@@ -12,6 +12,8 @@ interface TourPaymentPlanSectionProps {
   installments: number;
   onInstallmentsChange: (value: number) => void;
   disabled?: boolean;
+  /** Texto al guardar: tour vs reserva privada */
+  saveContext?: "tour" | "reservation";
 }
 
 export default function TourPaymentPlanSection({
@@ -19,7 +21,9 @@ export default function TourPaymentPlanSection({
   installments,
   onInstallmentsChange,
   disabled = false,
+  saveContext = "reservation",
 }: TourPaymentPlanSectionProps) {
+  const saveWord = saveContext === "tour" ? "el tour" : "la reserva";
   const safeCount = clampPaymentPlanInstallments(installments);
   const perPayment = useMemo(() => {
     if (totalClientPrice <= 0 || safeCount < 1) return null;
@@ -37,7 +41,7 @@ export default function TourPaymentPlanSection({
       <h3 className="qr-subpanel-title">Plan de pagos</h3>
       <p className="qr-field-hint qr-grid-span-full">
         Divide el precio total del viaje al cliente (incluye servicios agregados) en
-        parcialidades. Al guardar el tour se generará el calendario en la cuenta del
+        parcialidades. Al guardar {saveWord} se generará el calendario en la cuenta del
         cliente; los abonos reales se registran en Cuentas como hasta ahora.
       </p>
 

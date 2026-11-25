@@ -50,7 +50,7 @@ export default function PackagePriceBreakdownFields({
   platformProfitPercent = 17,
   onPlatformProfitPercentChange,
   disabled = false,
-  showInlineValidation = true,
+  showInlineValidation = false,
 }: PackagePriceBreakdownFieldsProps) {
   const input: PackagePriceBreakdownInput = {
     packageTotalCost,
@@ -75,8 +75,7 @@ export default function PackagePriceBreakdownFields({
       <div className="pkg-info-prices-head">
         <h4 className="pkg-info-prices-title">Costo real plataforma y precios por edad</h4>
         <p className="pkg-info-prices-desc">
-          El costo real plataforma es opcional; si lo indicas, reparte entre adulto, juvenil y niño.
-          La suma no puede superarlo y, al guardar con los tres precios, debe coincidir exactamente.
+          Referencia opcional para costo plataforma y precios por edad; no bloquea al guardar.
         </p>
       </div>
 

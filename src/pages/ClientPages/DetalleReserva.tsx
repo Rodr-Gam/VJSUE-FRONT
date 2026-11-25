@@ -12,7 +12,12 @@ import {
   buildServiceCostLines,
   computeReservationDisplayTotal,
 } from "../../utils/reservationPricing";
-import { getHotelCheckInOutLabel, getHotelDestinationLabel } from "../../utils/reservationServices";
+import {
+  clientReservationHasFlight,
+  clientReservationHasTransport,
+  getHotelCheckInOutLabel,
+  getHotelDestinationLabel,
+} from "../../utils/reservationServices";
 import {
   getReservationStateLabel,
   isReservationPaid,
@@ -32,6 +37,7 @@ import {
 } from "lucide-react";
 import PassengerProgress from "../../components/passengers/PassengerProgress";
 import ClientReservationFinance from "../../components/cliente/ClientReservationFinance";
+import { CLIENT_HOME_PATH } from "../../constants/clientPaths";
 import type { Account } from "../../types/finance";
 import {
   canManagePassengers,
@@ -196,9 +202,9 @@ export default function DetalleReserva() {
         <main className="dr-page">
           <div className="dr-container dr-container--empty">
             <p className="dr-empty">Reserva no encontrada.</p>
-            <Link to="/cliente/dashboard" className="Bback-detalle">
+            <Link to={CLIENT_HOME_PATH} className="Bback-detalle">
               <ArrowLeft size={16} />
-              Volver a mis reservas
+              Volver al inicio
             </Link>
           </div>
         </main>
@@ -223,6 +229,8 @@ export default function DetalleReserva() {
   const unitChild =
     reserva.unit_price_child ?? reserva.package?.price_child ?? "—";
   const returnDate = resolveReservationReturnDate(reserva);
+  const showFlight = clientReservationHasFlight(reserva.flight);
+  const showTransport = clientReservationHasTransport(reserva.transport);
   const flightAssigned = Boolean(reserva.flight?.airline_name?.trim());
   const transportAssigned = Boolean(reserva.transport?.company?.trim());
   const hotelAssigned = Boolean(reserva.hotel?.name?.trim());
@@ -236,9 +244,9 @@ export default function DetalleReserva() {
       <NavPrivClient />
       <main className="dr-page">
         <div className="dr-container">
-          <Link to="/cliente/dashboard" className="dr-back-link">
+          <Link to={CLIENT_HOME_PATH} className="dr-back-link">
             <ArrowLeft size={16} aria-hidden="true" />
-            Mis reservas
+            Inicio
           </Link>
 
           <header className="dr-hero">
@@ -366,28 +374,32 @@ export default function DetalleReserva() {
           <div className="dr-card">
             <h2 className="dr-section-title">Servicios del viaje</h2>
             <div className="dr-services">
-              <ServiceBlock
-                icon={<PlaneTakeoff size={18} />}
-                title="Vuelo"
-                assigned={flightAssigned}
-                primary={reserva.flight?.airline_name}
-                secondary={reserva.flight?.flight_schedule}
-                showKey={showFlightKey}
-                keyValue={reserva.flight?.hgdl_key}
-                keyLabel="Clave de vuelo (HGDL)"
-                keyHint="Guarda esta clave para tu check-in o consulta con la aerolínea."
-              />
-              <ServiceBlock
-                icon={<Bus size={18} />}
-                title="Transporte"
-                assigned={transportAssigned}
-                primary={reserva.transport?.company}
-                secondary={reserva.transport?.horary}
-                showKey={showTransportKey}
-                keyValue={reserva.transport?.hgdl_key}
-                keyLabel="Clave de transporte (HGDL)"
-                keyHint="Presenta esta clave al abordar el transporte asignado."
-              />
+              {showFlight && (
+                <ServiceBlock
+                  icon={<PlaneTakeoff size={18} />}
+                  title="Vuelo"
+                  assigned={flightAssigned}
+                  primary={reserva.flight?.airline_name}
+                  secondary={reserva.flight?.flight_schedule}
+                  showKey={showFlightKey}
+                  keyValue={reserva.flight?.hgdl_key}
+                  keyLabel="Clave de vuelo (HGDL)"
+                  keyHint="Guarda esta clave para tu check-in o consulta con la aerolínea."
+                />
+              )}
+              {showTransport && (
+                <ServiceBlock
+                  icon={<Bus size={18} />}
+                  title="Transporte"
+                  assigned={transportAssigned}
+                  primary={reserva.transport?.company}
+                  secondary={reserva.transport?.horary}
+                  showKey={showTransportKey}
+                  keyValue={reserva.transport?.hgdl_key}
+                  keyLabel="Clave de transporte (HGDL)"
+                  keyHint="Presenta esta clave al abordar el transporte asignado."
+                />
+              )}
               <ServiceBlock
                 icon={<Hotel size={18} />}
                 title="Hotel"
@@ -410,9 +422,9 @@ export default function DetalleReserva() {
             </div>
           )}
 
-          <Link to="/cliente/dashboard" className="Bback-detalle">
+          <Link to={CLIENT_HOME_PATH} className="Bback-detalle">
             <ArrowLeft size={16} aria-hidden="true" />
-            Regresar al dashboard
+            Regresar al inicio
           </Link>
         </div>
       </main>

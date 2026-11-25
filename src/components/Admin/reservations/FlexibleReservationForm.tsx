@@ -1,6 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../../api";
 import AdminLayout from "../../../layouts/AdminLayout";
+import LoadingScreen from "../../../components/Admin/LoadingScreen";
 import "../../../styles/VerReserva.css";
 import "../../../styles/QuickReservation.css";
 import {
@@ -17,17 +19,26 @@ import {
 } from "lucide-react";
 import QuickReservationFinanceSummary from "../../../components/Admin/reservations/QuickReservationFinanceSummary";
 import ServiceFinanceFields from "../../../components/Admin/ServiceFinanceFields";
-import PackagePriceBreakdownFields, {
-  getPackagePriceBreakdownError,
-} from "../../../components/Admin/packages/PackageInfoPriceFields";
+import PackagePriceBreakdownFields from "../../../components/Admin/packages/PackageInfoPriceFields";
 import {
   calcSupplierPaymentFromPlatformCost,
   type PlatformProfitPercent,
 } from "../../../utils/packageInfoPricing";
 import type { FlexibleReservationFormConfig } from "../../../config/flexibleReservationConfig";
-import { buildQuickReservationFinanceSummary } from "../../../utils/quickReservationFinance";
+import {
+  buildQuickReservationFinanceSummary,
+  multiplyMoneyInput,
+  normalizePassengerCount,
+} from "../../../utils/quickReservationFinance";
 import TourPaymentPlanSection from "./TourPaymentPlanSection";
 import { clampPaymentPlanInstallments } from "../../../utils/paymentPlan";
+import FinancePanel from "../../../components/Admin/finance/FinancePanel";
+import ReservationDocuments from "../../../components/Admin/ReservationDocuments";
+import {
+  mapReservationToQuickEditForm,
+  saveQuickReservationEdit,
+  type QuickEditEntityIds,
+} from "../../../utils/quickReservationEdit";
 
 interface City {
   id: number;
@@ -43,17 +54,12 @@ interface User {
 }
 
 interface PassengerRow {
+  id?: number;
   type: "adult" | "junior" | "child";
   name: string;
   last_name: string;
   birth_date: string;
   nationality: string;
-}
-
-interface RoomPriceRow {
-  occupancy_type: "single" | "double" | "triple" | "quadruple" | "suite";
-  nightly_rate: string;
-  total_rooms: string;
 }
 
 interface HotelSuggestion {
@@ -65,14 +71,6 @@ interface HotelSuggestion {
   provider_cost: string | null;
 }
 
-const OCCUPANCY_TYPES: RoomPriceRow["occupancy_type"][] = [
-  "single",
-  "double",
-  "triple",
-  "quadruple",
-  "suite",
-];
-
 const PASSENGER_LABEL: Record<PassengerRow["type"], string> = {
   adult: "Adulto",
   junior: "Juvenil",
@@ -81,9 +79,20 @@ const PASSENGER_LABEL: Record<PassengerRow["type"], string> = {
 
 interface FlexibleReservationFormProps {
   config: FlexibleReservationFormConfig;
+  editReservationId?: number;
 }
 
-export default function FlexibleReservationForm({ config }: FlexibleReservationFormProps) {
+export default function FlexibleReservationForm({
+  config,
+  editReservationId,
+}: FlexibleReservationFormProps) {
+  const navigate = useNavigate();
+  const isEditMode = editReservationId != null && editReservationId > 0;
+  const skipPassengerRebuild = useRef(false);
+  const [editLoading, setEditLoading] = useState(isEditMode);
+  const [editClientLabel, setEditClientLabel] = useState("");
+  const [entityIds, setEntityIds] = useState<QuickEditEntityIds | null>(null);
+  const [editBookingChannel, setEditBookingChannel] = useState("");
   // Cliente (mismo patrón de autocompletado que CrearReserva)
   const [userSearch, setUserSearch] = useState("");
   const [userResults, setUserResults] = useState<User[]>([]);
@@ -124,7 +133,9 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
   const [observation, setObservation] = useState("");
   const [paymentPlanInstallments, setPaymentPlanInstallments] = useState(5);
 
-  const isTourForm = config.apiPath === "/reservations/tours";
+  const isTourForm =
+    config.apiPath === "/reservations/tours" ||
+    (isEditMode && editBookingChannel === "tour");
 
   // Conteo y detalle de pasajeros
   const [adults, setAdults] = useState(0);
@@ -144,9 +155,6 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
   const [hotelSuggestions, setHotelSuggestions] = useState<HotelSuggestion[]>(
     [],
   );
-  const [roomPrices, setRoomPrices] = useState<RoomPriceRow[]>([
-    { occupancy_type: "double", nightly_rate: "", total_rooms: "1" },
-  ]);
 
   // Vuelo opcional
   const [includeFlight, setIncludeFlight] = useState(false);
@@ -156,6 +164,7 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
   const [flightKey, setFlightKey] = useState("");
   const [flightBookingSource, setFlightBookingSource] = useState("");
   const [flightClientCost, setFlightClientCost] = useState("");
+  const [flightPassengerCount, setFlightPassengerCount] = useState(1);
   const [flightSupplierPayment, setFlightSupplierPayment] = useState("");
   const [flightBonusDiscount, setFlightBonusDiscount] = useState("");
   const [flightBonusDiscountNote, setFlightBonusDiscountNote] = useState("");
@@ -166,10 +175,10 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
   const [transportCompany, setTransportCompany] = useState("");
   const [transportDestination, setTransportDestination] = useState("");
   const [transportHorary, setTransportHorary] = useState("");
-  const [transportSupplier, setTransportSupplier] = useState("");
   const [transportKey, setTransportKey] = useState("");
   const [transportBookingSource, setTransportBookingSource] = useState("");
   const [transportClientCost, setTransportClientCost] = useState("");
+  const [transportPassengerCount, setTransportPassengerCount] = useState(1);
   const [transportSupplierPayment, setTransportSupplierPayment] = useState("");
   const [transportBonusDiscount, setTransportBonusDiscount] = useState("");
   const [transportBonusDiscountNote, setTransportBonusDiscountNote] = useState("");
@@ -198,8 +207,7 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
     return total.toFixed(2);
   }, [adults, juniors, children, priceAdult, priceJunior, priceChild]);
 
-  const tourClientTripTotal = useMemo(() => {
-    if (!isTourForm) return 0;
+  const clientTripTotal = useMemo(() => {
     const summary = buildQuickReservationFinanceSummary({
       adults,
       juniors,
@@ -214,17 +222,17 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
       includeFlight,
       flightSupplierPayment,
       flightClientCost,
+      flightPassengerCount,
       flightBonusDiscount,
       includeTransport,
       transportSupplierPayment,
       transportClientCost,
+      transportPassengerCount,
       transportBonusDiscount,
       includeHotel,
-      roomPrices,
     });
     return summary.totals.clientCost;
   }, [
-    isTourForm,
     adults,
     juniors,
     children,
@@ -238,13 +246,14 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
     includeFlight,
     flightSupplierPayment,
     flightClientCost,
+    flightPassengerCount,
     flightBonusDiscount,
     includeTransport,
     transportSupplierPayment,
     transportClientCost,
+    transportPassengerCount,
     transportBonusDiscount,
     includeHotel,
-    roomPrices,
   ]);
 
   // ---- Cargar ciudades ----
@@ -254,6 +263,100 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
       .then((res) => setCities(res.data))
       .catch((err) => console.error(err));
   }, []);
+
+  useEffect(() => {
+    if (!isEditMode || !editReservationId) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        setEditLoading(true);
+        const res = await api.get(`/reservations/${editReservationId}`);
+        if (cancelled) return;
+        const mapped = mapReservationToQuickEditForm(res.data);
+        setEntityIds(mapped.entityIds);
+        setEditBookingChannel(mapped.bookingChannel);
+        setEditClientLabel(mapped.clientLabel);
+        setSelectedUser(mapped.clientUserId);
+        skipPassengerRebuild.current = true;
+        setCityId(mapped.cityId);
+        setDuration(mapped.duration);
+        setDepartureDate(mapped.departureDate);
+        setReturnDate(mapped.returnDate);
+        setReservationDate(mapped.reservationDate);
+        setPriceAdult(mapped.priceAdult);
+        setPriceJunior(mapped.priceJunior);
+        setPriceChild(mapped.priceChild);
+        setPackageTotalCost(mapped.packageTotalCost);
+        setPlatformProfitPercent(mapped.platformProfitPercent);
+        setPackageClientCost(mapped.packageClientCost);
+        setPackageSupplierPayment(mapped.packageSupplierPayment);
+        setPackageBonusDiscount(mapped.packageBonusDiscount);
+        setPackageBonusDiscountNote(mapped.packageBonusDiscountNote);
+        setReference(mapped.reference);
+        setStateReser(mapped.stateReser);
+        setObservation(mapped.observation);
+        setAdults(mapped.adults);
+        setJuniors(mapped.juniors);
+        setChildren(mapped.children);
+        setPassengers(mapped.passengers);
+        setIncludeHotel(mapped.includeHotel);
+        setHotelName(mapped.hotelName);
+        setHotelDestination(mapped.hotelDestination);
+        setHotelSupplier(mapped.hotelSupplier);
+        setHotelKey(mapped.hotelKey);
+        setHotelBookingSource(mapped.hotelBookingSource);
+        setHotelCheckInOut(mapped.hotelCheckInOut);
+        setHotelObservation(mapped.hotelObservation);
+        setIncludeFlight(mapped.includeFlight);
+        setFlightAirline(mapped.flightAirline);
+        setFlightDestination(mapped.flightDestination);
+        setFlightSchedule(mapped.flightSchedule);
+        setFlightKey(mapped.flightKey);
+        setFlightBookingSource(mapped.flightBookingSource);
+        setFlightClientCost(mapped.flightClientCost);
+        setFlightPassengerCount(mapped.flightPassengerCount);
+        setFlightSupplierPayment(mapped.flightSupplierPayment);
+        setFlightBonusDiscount(mapped.flightBonusDiscount);
+        setFlightBonusDiscountNote(mapped.flightBonusDiscountNote);
+        setFlightObservation(mapped.flightObservation);
+        setIncludeTransport(mapped.includeTransport);
+        setTransportCompany(mapped.transportCompany);
+        setTransportDestination(mapped.transportDestination);
+        setTransportHorary(mapped.transportHorary);
+        setTransportKey(mapped.transportKey);
+        setTransportBookingSource(mapped.transportBookingSource);
+        setTransportClientCost(mapped.transportClientCost);
+        setTransportPassengerCount(mapped.transportPassengerCount);
+        setTransportSupplierPayment(mapped.transportSupplierPayment);
+        setTransportBonusDiscount(mapped.transportBonusDiscount);
+        setTransportBonusDiscountNote(mapped.transportBonusDiscountNote);
+        setTransportObservation(mapped.transportObservation);
+      } catch (err) {
+        console.error(err);
+        setMensaje({
+          texto: "No se pudo cargar la reserva para editar.",
+          tipo: "error",
+        });
+      } finally {
+        if (!cancelled) setEditLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isEditMode, editReservationId]);
+
+  // Destino en hotel, vuelo y transporte = ciudad elegida en el viaje
+  useEffect(() => {
+    if (!cityId || cities.length === 0) return;
+    const city = cities.find((c) => c.id === cityId);
+    if (!city?.name) return;
+    setHotelDestination(city.name);
+    setFlightDestination(city.name);
+    setTransportDestination(city.name);
+  }, [cityId, cities]);
 
   // ---- Buscador de cliente (idéntico patrón a CrearReserva) ----
   useEffect(() => {
@@ -285,6 +388,10 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
 
   // ---- Regenerar filas de pasajeros cuando cambian los conteos ----
   useEffect(() => {
+    if (skipPassengerRebuild.current) {
+      skipPassengerRebuild.current = false;
+      return;
+    }
     const buildRows = (
       type: PassengerRow["type"],
       count: number,
@@ -341,20 +448,6 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
     setHotelSuggestions([]);
   };
 
-  const addRoomPriceRow = () => {
-    const used = roomPrices.map((r) => r.occupancy_type);
-    const next =
-      OCCUPANCY_TYPES.find((t) => !used.includes(t)) || OCCUPANCY_TYPES[0];
-    setRoomPrices((prev) => [
-      ...prev,
-      { occupancy_type: next, nightly_rate: "", total_rooms: "1" },
-    ]);
-  };
-
-  const removeRoomPriceRow = (idx: number) => {
-    setRoomPrices((prev) => prev.filter((_, i) => i !== idx));
-  };
-
   const updatePassenger = (
     idx: number,
     field: keyof PassengerRow,
@@ -402,9 +495,6 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
     setHotelBookingSource("");
     setHotelCheckInOut("");
     setHotelObservation("");
-    setRoomPrices([
-      { occupancy_type: "double", nightly_rate: "", total_rooms: "1" },
-    ]);
 
     setIncludeFlight(false);
     setFlightAirline("");
@@ -413,6 +503,7 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
     setFlightKey("");
     setFlightBookingSource("");
     setFlightClientCost("");
+    setFlightPassengerCount(1);
     setFlightSupplierPayment("");
     setFlightBonusDiscount("");
     setFlightBonusDiscountNote("");
@@ -422,10 +513,10 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
     setTransportCompany("");
     setTransportDestination("");
     setTransportHorary("");
-    setTransportSupplier("");
     setTransportKey("");
     setTransportBookingSource("");
     setTransportClientCost("");
+    setTransportPassengerCount(1);
     setTransportSupplierPayment("");
     setTransportBonusDiscount("");
     setTransportBonusDiscountNote("");
@@ -455,28 +546,13 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
       return;
     }
 
-    if (clientMode === "existing" && !selectedUser) {
+    if (!isEditMode && clientMode === "existing" && !selectedUser) {
       setMensaje({ texto: "Selecciona un cliente existente.", tipo: "error" });
       return;
     }
 
-    const priceBreakdownError = getPackagePriceBreakdownError(
-      {
-        packageTotalCost,
-        priceAdult,
-        priceJunior,
-        priceChild,
-        passengerCounts: { adults, juniors, children },
-      },
-      true,
-    );
-    if (priceBreakdownError) {
-      setMensaje({ texto: priceBreakdownError, tipo: "error" });
-      return;
-    }
-
-    if (isTourForm) {
-      if (tourClientTripTotal <= 0) {
+    if (!isEditMode) {
+      if (clientTripTotal <= 0) {
         setMensaje({
           texto:
             "Indica el precio total al cliente (cobro del viaje) para configurar el plan de pagos.",
@@ -484,6 +560,88 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
         });
         return;
       }
+    }
+
+    if (isEditMode && entityIds) {
+      try {
+        setLoading(true);
+        await saveQuickReservationEdit({
+          entityIds,
+          packageId: entityIds.packageId,
+          cityId,
+          duration,
+          departureDate,
+          returnDate,
+          reservationDate,
+          priceAdult,
+          priceJunior,
+          priceChild,
+          packageTotalCost,
+          platformProfitPercent,
+          packageClientCost,
+          packageSupplierPayment,
+          packageBonusDiscount,
+          packageBonusDiscountNote,
+          reference,
+          stateReser,
+          observation,
+          adults,
+          juniors,
+          children,
+          passengers,
+          includeHotel,
+          hotelName,
+          hotelDestination,
+          hotelSupplier,
+          hotelKey,
+          hotelBookingSource,
+          hotelCheckInOut,
+          hotelObservation,
+          roomPrices: [],
+          includeFlight,
+          flightAirline,
+          flightDestination,
+          flightSchedule,
+          flightKey,
+          flightBookingSource,
+          flightClientCost,
+          flightPassengerCount,
+          flightSupplierPayment,
+          flightBonusDiscount,
+          flightBonusDiscountNote,
+          flightObservation,
+          includeTransport,
+          transportCompany,
+          transportDestination,
+          transportHorary,
+          transportKey,
+          transportBookingSource,
+          transportClientCost,
+          transportPassengerCount,
+          transportSupplierPayment,
+          transportBonusDiscount,
+          transportBonusDiscountNote,
+          transportObservation,
+        });
+        setMensaje({ texto: config.successFallback, tipo: "success" });
+        setTimeout(() => {
+          navigate(`/admin/reservas/detalle/${entityIds.reservationId}`);
+        }, 1200);
+      } catch (error: any) {
+        const firstError = error.response?.data?.errors
+          ? (Object.values(error.response.data.errors)[0] as string[])?.[0]
+          : null;
+        setMensaje({
+          texto:
+            firstError ||
+            error.response?.data?.message ||
+            config.errorFallback,
+          tipo: "error",
+        });
+      } finally {
+        setLoading(false);
+      }
+      return;
     }
 
     const payload: any = {
@@ -511,11 +669,9 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
       passengers,
     };
 
-    if (isTourForm) {
-      payload.payment_plan_installments = clampPaymentPlanInstallments(
-        paymentPlanInstallments,
-      );
-    }
+    payload.payment_plan_installments = clampPaymentPlanInstallments(
+      paymentPlanInstallments,
+    );
 
     if (clientMode === "existing") {
       payload.user_id = selectedUser;
@@ -537,22 +693,29 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
         booking_source: hotelBookingSource || null,
         check_in_out: hotelCheckInOut || null,
         observations: hotelObservation || null,
-        room_prices: roomPrices.filter(
-          (room) => room.nightly_rate.trim() !== "",
-        ),
+        room_prices: [],
       };
     }
 
     if (includeFlight) {
+      const flightCount = normalizePassengerCount(flightPassengerCount);
+      const flightClientTotal =
+        multiplyMoneyInput(flightClientCost, flightCount) ||
+        flightClientCost.trim() ||
+        null;
+      const flightSupplierTotal =
+        multiplyMoneyInput(flightSupplierPayment, flightCount) ||
+        flightSupplierPayment.trim();
+
       payload.flight = {
         airline_name: flightAirline,
         destination: flightDestination,
         flight_schedule: flightSchedule,
         hgdl_key: flightKey,
         booking_source: flightBookingSource || null,
-        provider_cost: flightSupplierPayment.trim(),
-        client_cost: flightClientCost || null,
-        supplier_payment: flightSupplierPayment.trim() || null,
+        provider_cost: flightSupplierTotal,
+        client_cost: flightClientTotal,
+        supplier_payment: flightSupplierTotal || null,
         bonus_discount: flightBonusDiscount.trim() || null,
         bonus_discount_note: flightBonusDiscountNote.trim() || null,
         observations: flightObservation || null,
@@ -560,15 +723,24 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
     }
 
     if (includeTransport) {
+      const transportCount = normalizePassengerCount(transportPassengerCount);
+      const transportClientTotal =
+        multiplyMoneyInput(transportClientCost, transportCount) ||
+        transportClientCost.trim() ||
+        null;
+      const transportSupplierTotal =
+        multiplyMoneyInput(transportSupplierPayment, transportCount) ||
+        transportSupplierPayment.trim();
+
       payload.transport = {
         company: transportCompany,
         hgdl_key: transportKey,
         destination: transportDestination,
         horary: transportHorary,
-        supplier: transportSupplier,
-        provider_cost: transportSupplierPayment.trim(),
-        client_cost: transportClientCost || null,
-        supplier_payment: transportSupplierPayment.trim() || null,
+        supplier: transportCompany.trim(),
+        provider_cost: transportSupplierTotal,
+        client_cost: transportClientTotal,
+        supplier_payment: transportSupplierTotal || null,
         bonus_discount: transportBonusDiscount.trim() || null,
         bonus_discount_note: transportBonusDiscountNote.trim() || null,
         booking_source: transportBookingSource || null,
@@ -603,6 +775,14 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
     }
   };
 
+  if (isEditMode && editLoading) {
+    return (
+      <AdminLayout>
+        <LoadingScreen icon={Sparkles} text="Cargando reserva..." />
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <div className="qr-page">
@@ -627,11 +807,25 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
               <div>
                 <h2 className="qr-section-title">Cliente</h2>
                 <p className="qr-section-desc">
-                  Busca un cliente registrado o captura uno nuevo para esta reserva.
+                  {isEditMode
+                    ? "El cliente de esta reserva no se puede cambiar desde aquí."
+                    : "Busca un cliente registrado o captura uno nuevo para esta reserva."}
                 </p>
               </div>
             </div>
 
+            {isEditMode ? (
+              <label className="R-label">
+                Cliente
+                <input
+                  type="text"
+                  className="R-input"
+                  readOnly
+                  disabled
+                  value={editClientLabel || "—"}
+                />
+              </label>
+            ) : (
             <div className="qr-client-block">
               <div className="qr-segment" role="tablist" aria-label="Tipo de cliente">
                 <button
@@ -733,6 +927,7 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
                 </div>
               )}
             </div>
+            )}
           </section>
 
           <section className="R-card-f">
@@ -844,7 +1039,119 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
                 </div>
               </div>
 
-              <div className="qr-pricing-panel">
+              <div className="qr-pricing-stack">
+                <div
+                  className={`qr-hotel-before-pricing qr-service-card${
+                    includeHotel ? " qr-service-card--open" : ""
+                  }`}
+                >
+                  <label className="qr-service-toggle">
+                    <input
+                      type="checkbox"
+                      checked={includeHotel}
+                      onChange={(e) => setIncludeHotel(e.target.checked)}
+                    />
+                    <Hotel size={18} aria-hidden="true" />
+                    <span>Incluir hotel</span>
+                  </label>
+
+                  {includeHotel && (
+                    <>
+                      <div className="qr-grid qr-grid--3">
+                        <label className="R-label qr-autocomplete-field">
+                          Nombre del hotel
+                          <input
+                            required
+                            type="text"
+                            className="R-input"
+                            placeholder="Escribe para autocompletar..."
+                            value={hotelName}
+                            autoComplete="off"
+                            onChange={(e) => setHotelName(e.target.value)}
+                          />
+                          {hotelSuggestions.length > 0 && (
+                            <ul
+                              className="qr-dropdown qr-dropdown--in-flow"
+                              role="listbox"
+                              aria-label="Hoteles sugeridos"
+                            >
+                              {hotelSuggestions.map((s, i) => (
+                                <li
+                                  key={`${s.name}-${s.destination}-${i}`}
+                                  role="option"
+                                  onMouseDown={() => applyHotelSuggestion(s)}
+                                >
+                                  {s.name} — {s.destination}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </label>
+
+                        <label className="R-label">
+                          Destino
+                          <input
+                            type="text"
+                            className="R-input"
+                            value={hotelDestination}
+                            onChange={(e) => setHotelDestination(e.target.value)}
+                          />
+                        </label>
+                        <label className="R-label">
+                          Proveedor
+                          <input
+                            type="text"
+                            className="R-input"
+                            value={hotelSupplier}
+                            onChange={(e) => setHotelSupplier(e.target.value)}
+                          />
+                        </label>
+                        <label className="R-label">
+                          HGDL Key
+                          <input
+                            type="text"
+                            className="R-input"
+                            value={hotelKey}
+                            onChange={(e) => setHotelKey(e.target.value)}
+                          />
+                        </label>
+                        <label className="R-label">
+                          Medio de reservación
+                          <input
+                            type="text"
+                            className="R-input"
+                            value={hotelBookingSource}
+                            onChange={(e) =>
+                              setHotelBookingSource(e.target.value)
+                            }
+                          />
+                        </label>
+                        <label className="R-label">
+                          Check-in / Check-out
+                          <input
+                            type="text"
+                            className="R-input"
+                            placeholder="Ej. Check-in 3pm - Check-out 12pm"
+                            value={hotelCheckInOut}
+                            onChange={(e) => setHotelCheckInOut(e.target.value)}
+                          />
+                        </label>
+                      </div>
+                      <label className="R-label">
+                        Observaciones del hotel
+                        <textarea
+                          rows={1}
+                          className="R-textarea"
+                          value={hotelObservation}
+                          onChange={(e) => setHotelObservation(e.target.value)}
+                          placeholder="Notas específicas del hotel"
+                        />
+                      </label>
+                    </>
+                  )}
+                </div>
+
+                <div className="qr-pricing-panel">
                 <PackagePriceBreakdownFields
                   packageTotalCost={packageTotalCost}
                   onPackageTotalCostChange={setPackageTotalCost}
@@ -882,14 +1189,16 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
                   />
                 </div>
 
-                {isTourForm && (
+                {!isEditMode && (
                   <TourPaymentPlanSection
-                    totalClientPrice={tourClientTripTotal}
+                    totalClientPrice={clientTripTotal}
                     installments={paymentPlanInstallments}
                     onInstallmentsChange={setPaymentPlanInstallments}
                     disabled={loading}
+                    saveContext={isTourForm ? "tour" : "reservation"}
                   />
                 )}
+                </div>
               </div>
 
               <label className="R-label qr-observations-block">
@@ -1016,200 +1325,11 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
               <div>
                 <h2 className="qr-section-title">Servicios opcionales</h2>
                 <p className="qr-section-desc">
-                  Activa hotel, vuelo o transporte solo si aplican a esta reserva.
+                  Activa vuelo o transporte solo si aplican a esta reserva. El hotel
+                  está arriba, junto a precios y cobros.
                 </p>
               </div>
             </div>
-          </section>
-
-          <section
-            className={`R-card-f qr-service-card${includeHotel ? " qr-service-card--open" : ""}`}
-          >
-            <label className="qr-service-toggle">
-              <input
-                type="checkbox"
-                checked={includeHotel}
-                onChange={(e) => setIncludeHotel(e.target.checked)}
-              />
-              <Hotel size={18} aria-hidden="true" />
-              <span>Incluir hotel</span>
-            </label>
-
-            {includeHotel && (
-              <>
-                <div className="qr-grid qr-grid--3">
-                      <label
-                        className="R-label"
-                        style={{ position: "relative" }}
-                      >
-                        Nombre del hotel
-                        <input
-                          required
-                          type="text"
-                          className="R-input"
-                          placeholder="Escribe para autocompletar..."
-                          value={hotelName}
-                          onChange={(e) => setHotelName(e.target.value)}
-                        />
-                        {hotelSuggestions.length > 0 && (
-                          <ul className="qr-dropdown">
-                            {hotelSuggestions.map((s, i) => (
-                              <li
-                                key={i}
-                                onMouseDown={() => applyHotelSuggestion(s)}
-                              >
-                                {s.name} — {s.destination}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </label>
-
-                      <label className="R-label">
-                        Destino
-                        <input
-                          type="text"
-                          className="R-input"
-                          value={hotelDestination}
-                          onChange={(e) => setHotelDestination(e.target.value)}
-                        />
-                      </label>
-                      <label className="R-label">
-                        Proveedor
-                        <input
-                          type="text"
-                          className="R-input"
-                          value={hotelSupplier}
-                          onChange={(e) => setHotelSupplier(e.target.value)}
-                        />
-                      </label>
-                      <label className="R-label">
-                        HGDL Key
-                        <input
-                          type="text"
-                          className="R-input"
-                          value={hotelKey}
-                          onChange={(e) => setHotelKey(e.target.value)}
-                        />
-                      </label>
-                      <label className="R-label">
-                        Medio de reservación
-                        <input
-                          type="text"
-                          className="R-input"
-                          value={hotelBookingSource}
-                          onChange={(e) =>
-                            setHotelBookingSource(e.target.value)
-                          }
-                        />
-                      </label>
-                      <label className="R-label">
-                        Check-in / Check-out
-                        <input
-                          type="text"
-                          className="R-input"
-                          placeholder="Ej. Check-in 3pm - Check-out 12pm"
-                          value={hotelCheckInOut}
-                          onChange={(e) => setHotelCheckInOut(e.target.value)}
-                        />
-                      </label>
-                    </div>
-                    <label className="R-label">
-                      Observaciones del hotel
-                      <textarea
-                        rows={1}
-                        className="R-textarea"
-                        value={hotelObservation}
-                        onChange={(e) => setHotelObservation(e.target.value)}
-                        placeholder="Notas específicas del hotel"
-                      />
-                    </label>
-
-                    <div className="qr-subsection">
-                      <div className="qr-subsection-head">
-                        <h4 className="qr-subsection-title">Tarifas por ocupación</h4>
-                        <button
-                          type="button"
-                          onClick={addRoomPriceRow}
-                          className="qr-btn-link"
-                        >
-                          <PlusIcon size={16} /> Agregar tipo
-                        </button>
-                      </div>
-                      <p className="qr-subsection-desc">
-                        El costo extra de habitación es opcional. Si lo capturas,
-                        se sumará al cliente en el desglose financiero.
-                      </p>
-                      {roomPrices.map((rp, idx) => (
-                        <div key={idx} className="qr-room-row">
-                          <select
-                            className="R-select"
-                            value={rp.occupancy_type}
-                            onChange={(e) =>
-                              setRoomPrices((prev) =>
-                                prev.map((r, i) =>
-                                  i === idx
-                                    ? {
-                                        ...r,
-                                        occupancy_type: e.target
-                                          .value as RoomPriceRow["occupancy_type"],
-                                      }
-                                    : r,
-                                ),
-                              )
-                            }
-                          >
-                            {OCCUPANCY_TYPES.map((t) => (
-                              <option key={t} value={t}>
-                                {t}
-                              </option>
-                            ))}
-                          </select>
-                          <input
-                            type="number"
-                            step="0.0001"
-                            min="0"
-                            placeholder="Costo extra habitación (opcional)"
-                            className="R-input"
-                            value={rp.nightly_rate}
-                            onChange={(e) =>
-                              setRoomPrices((prev) =>
-                                prev.map((r, i) =>
-                                  i === idx
-                                    ? { ...r, nightly_rate: e.target.value }
-                                    : r,
-                                ),
-                              )
-                            }
-                          />
-                          <input
-                            type="number"
-                            min="1"
-                            placeholder="Habitaciones"
-                            className="R-input"
-                            value={rp.total_rooms}
-                            onChange={(e) =>
-                              setRoomPrices((prev) =>
-                                prev.map((r, i) =>
-                                  i === idx
-                                    ? { ...r, total_rooms: e.target.value }
-                                    : r,
-                                ),
-                              )
-                            }
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeRoomPriceRow(idx)}
-                            className="qr-btn-link qr-btn-link--danger"
-                          >
-                            <XIcon size={16} /> Quitar
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
           </section>
 
           <section
@@ -1282,6 +1402,9 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
                     </label>
                     <div className="qr-grid-span-full">
                       <ServiceFinanceFields
+                        perPerson
+                        passengerCount={flightPassengerCount}
+                        onPassengerCountChange={setFlightPassengerCount}
                         clientCost={flightClientCost}
                         onClientCostChange={setFlightClientCost}
                         supplierPayment={flightSupplierPayment}
@@ -1323,15 +1446,24 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
             {includeTransport && (
               <div className="qr-grid qr-grid--3">
                     <label className="R-label">
-                      Compañía
-                      <input
+                      Privado / Compartido
+                      <select
                         required
-                        type="text"
-                        className="R-input"
-                        placeholder="Ej. Transportes Gdl"
+                        className="R-select"
                         value={transportCompany}
                         onChange={(e) => setTransportCompany(e.target.value)}
-                      />
+                      >
+                        <option value="">Seleccionar…</option>
+                        <option value="Privado">Privado</option>
+                        <option value="Compartido">Compartido</option>
+                        {transportCompany &&
+                          transportCompany !== "Privado" &&
+                          transportCompany !== "Compartido" && (
+                            <option value={transportCompany}>
+                              {transportCompany}
+                            </option>
+                          )}
+                      </select>
                     </label>
                     <label className="R-label">
                       Destino
@@ -1358,17 +1490,6 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
                       />
                     </label>
                     <label className="R-label">
-                      Proveedor
-                      <input
-                        required
-                        type="text"
-                        className="R-input"
-                        placeholder="Ej. ADO, Cancún Transfers"
-                        value={transportSupplier}
-                        onChange={(e) => setTransportSupplier(e.target.value)}
-                      />
-                    </label>
-                    <label className="R-label">
                       HGDL o clave
                       <input
                         required
@@ -1392,6 +1513,9 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
                     </label>
                     <div className="qr-grid-span-full">
                       <ServiceFinanceFields
+                        perPerson
+                        passengerCount={transportPassengerCount}
+                        onPassengerCountChange={setTransportPassengerCount}
                         clientCost={transportClientCost}
                         onClientCostChange={setTransportClientCost}
                         supplierPayment={transportSupplierPayment}
@@ -1434,13 +1558,14 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
               includeFlight={includeFlight}
               flightSupplierPayment={flightSupplierPayment}
               flightClientCost={flightClientCost}
+              flightPassengerCount={flightPassengerCount}
               flightBonusDiscount={flightBonusDiscount}
               includeTransport={includeTransport}
               transportSupplierPayment={transportSupplierPayment}
               transportClientCost={transportClientCost}
+              transportPassengerCount={transportPassengerCount}
               transportBonusDiscount={transportBonusDiscount}
               includeHotel={includeHotel}
-              roomPrices={roomPrices}
             />
           </div>
 
@@ -1449,9 +1574,10 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
               type="submit"
               className="qr-submit"
               disabled={
-                (clientMode === "existing" && !selectedUser) ||
-                (clientMode === "new" &&
-                  (!newClientName || !newClientLastName)) ||
+                (!isEditMode &&
+                  ((clientMode === "existing" && !selectedUser) ||
+                    (clientMode === "new" &&
+                      (!newClientName || !newClientLastName)))) ||
                 !cityId ||
                 loading
               }
@@ -1461,6 +1587,17 @@ export default function FlexibleReservationForm({ config }: FlexibleReservationF
             </button>
           </div>
         </form>
+
+        {isEditMode && editReservationId ? (
+          <>
+            <div className="R-card-f mt-4">
+              <FinancePanel reservationId={editReservationId} />
+            </div>
+            <div className="R-card-f mt-4">
+              <ReservationDocuments reservationId={editReservationId} />
+            </div>
+          </>
+        ) : null}
       </div>
     </AdminLayout>
   );

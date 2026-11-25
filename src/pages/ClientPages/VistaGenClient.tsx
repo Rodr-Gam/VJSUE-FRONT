@@ -48,7 +48,12 @@ import {
 } from "../../utils/reservationPricing";
 
 import { shouldShowHgdlKey } from "../../utils/reservationStatus";
-import { getHotelCheckInOutLabel, getHotelDestinationLabel } from "../../utils/reservationServices";
+import {
+  clientReservationHasFlight,
+  clientReservationHasTransport,
+  getHotelCheckInOutLabel,
+  getHotelDestinationLabel,
+} from "../../utils/reservationServices";
 
 import PassengerProgress from "../../components/passengers/PassengerProgress";
 
@@ -146,6 +151,10 @@ function ReservationCard({ reserva }: { reserva: Reservation }) {
 
   const showHotelKey = shouldShowHgdlKey(reserva.state, reserva.hotel?.hgdl_key);
 
+  const showFlight = clientReservationHasFlight(reserva.flight);
+
+  const showTransport = clientReservationHasTransport(reserva.transport);
+
   const flightAssigned = hasValue(reserva.flight?.airline_name);
 
   const transportAssigned = hasValue(reserva.transport?.company);
@@ -242,93 +251,53 @@ function ReservationCard({ reserva }: { reserva: Reservation }) {
 
         <div className="bp-services">
 
-          <div
-
-            className={`bp-service${flightAssigned ? "" : " bp-service--pending"}`}
-
-          >
-
-            <span className="bp-service-icon">
-
-              <PlaneTakeoffIcon size={15} />
-
-            </span>
-
-            <div className="bp-service-text">
-
-              <span className="bp-service-title">
-
-                {reserva.flight?.airline_name ?? "Aerolínea sin asignar"}
-
+          {showFlight && (
+            <div
+              className={`bp-service${flightAssigned ? "" : " bp-service--pending"}`}
+            >
+              <span className="bp-service-icon">
+                <PlaneTakeoffIcon size={15} />
               </span>
-
-              <span className="bp-service-sub">
-
-                {reserva.flight?.flight_schedule ??
-
-                  "Itinerario de vuelo pendiente"}
-
-              </span>
-
-              {showFlightKey && (
-
-                <span className="bp-service-key">
-
-                  Clave: <strong>{reserva.flight!.hgdl_key}</strong>
-
+              <div className="bp-service-text">
+                <span className="bp-service-title">
+                  {reserva.flight?.airline_name ?? "Aerolínea sin asignar"}
                 </span>
-
-              )}
-
-            </div>
-
-          </div>
-
-
-
-          <div
-
-            className={`bp-service${transportAssigned ? "" : " bp-service--pending"}`}
-
-          >
-
-            <span className="bp-service-icon">
-
-              <BusIcon size={15} />
-
-            </span>
-
-            <div className="bp-service-text">
-
-              <span className="bp-service-title">
-
-                {reserva.transport?.company ?? "Transporte sin asignar"}
-
-              </span>
-
-              <span className="bp-service-sub">
-
-                {reserva.transport?.horary ??
-
-                  "Itinerario de autobús pendiente"}
-
-              </span>
-
-              {showTransportKey && (
-
-                <span className="bp-service-key">
-
-                  Clave: <strong>{reserva.transport!.hgdl_key}</strong>
-
+                <span className="bp-service-sub">
+                  {reserva.flight?.flight_schedule ??
+                    "Itinerario de vuelo pendiente"}
                 </span>
-
-              )}
-
+                {showFlightKey && (
+                  <span className="bp-service-key">
+                    Clave: <strong>{reserva.flight!.hgdl_key}</strong>
+                  </span>
+                )}
+              </div>
             </div>
+          )}
 
-          </div>
-
-
+          {showTransport && (
+            <div
+              className={`bp-service${transportAssigned ? "" : " bp-service--pending"}`}
+            >
+              <span className="bp-service-icon">
+                <BusIcon size={15} />
+              </span>
+              <div className="bp-service-text">
+                <span className="bp-service-title">
+                  {reserva.transport?.company ?? "Transporte sin asignar"}
+                </span>
+                <span className="bp-service-sub">
+                  {reserva.transport?.horary ??
+                    "Itinerario de autobús pendiente"}
+                </span>
+                {showTransportKey && (
+                  <span className="bp-service-key">
+                    Clave: <strong>{reserva.transport!.hgdl_key}</strong>
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
 
           <div
 
@@ -572,7 +541,7 @@ export default function GenCliente() {
 
             <div className="gc-header-text">
 
-              <p className="gc-eyebrow">Dashboard</p>
+              <p className="gc-eyebrow">Inicio</p>
 
               <h1 className="gc-greeting">
                 ¡Hola, <span>{firstName}</span>!

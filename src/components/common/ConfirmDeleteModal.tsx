@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import { AlertTriangle, Trash2, X } from "lucide-react";
+import "../../styles/ConfirmDeleteModal.css";
+
 interface ConfirmDeleteModalProps {
   /** Si es null, el modal no se muestra */
   isOpen: boolean;
@@ -6,6 +10,7 @@ interface ConfirmDeleteModalProps {
   confirmLabel?: string;
   cancelLabel?: string;
   loading?: boolean;
+  footnote?: string;
   onCancel: () => void;
   onConfirm: () => void;
 }
@@ -17,22 +22,86 @@ export default function ConfirmDeleteModal({
   confirmLabel = "Sí, eliminar",
   cancelLabel = "Cancelar",
   loading = false,
+  footnote = "Esta acción es permanente y no se puede deshacer.",
   onCancel,
   onConfirm,
 }: ConfirmDeleteModalProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !loading) onCancel();
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [isOpen, loading, onCancel]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">
-        <h3 className="text-lg font-bold text-gray-800 mb-2">{title}</h3>
-        <p className="text-sm text-gray-500 mb-6">{description}</p>
-        <div className="flex justify-end gap-3">
+    <div
+      className="confirm-delete-backdrop"
+      role="presentation"
+      onClick={loading ? undefined : onCancel}
+    >
+      <div
+        className="confirm-delete-card"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="confirm-delete-title"
+        aria-describedby="confirm-delete-desc"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          className="confirm-delete-btn confirm-delete-btn--ghost"
+          style={{
+            position: "absolute",
+            top: "0.85rem",
+            right: "0.85rem",
+            minHeight: "2rem",
+            width: "2rem",
+            padding: 0,
+            borderRadius: "999px",
+          }}
+          onClick={onCancel}
+          disabled={loading}
+          aria-label="Cerrar"
+        >
+          <X size={16} />
+        </button>
+
+        <div className="confirm-delete-icon-wrap" aria-hidden="true">
+          <Trash2 size={22} strokeWidth={2.2} />
+        </div>
+
+        <p className="confirm-delete-kicker">Viajes Sueña · confirmación</p>
+        <h3 id="confirm-delete-title" className="confirm-delete-title">
+          {title}
+        </h3>
+        <p id="confirm-delete-desc" className="confirm-delete-desc">
+          {description}
+        </p>
+
+        {footnote ? (
+          <p className="confirm-delete-note">
+            <AlertTriangle size={16} className="shrink-0 text-amber-600" />
+            <span>{footnote}</span>
+          </p>
+        ) : null}
+
+        <div className="confirm-delete-actions">
           <button
             type="button"
             onClick={onCancel}
             disabled={loading}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 text-sm hover:bg-gray-100 disabled:opacity-50"
+            className="confirm-delete-btn confirm-delete-btn--ghost"
           >
             {cancelLabel}
           </button>
@@ -40,8 +109,9 @@ export default function ConfirmDeleteModal({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className="px-4 py-2 rounded-lg bg-red-500 text-white text-sm hover:bg-red-600 disabled:opacity-50"
+            className="confirm-delete-btn confirm-delete-btn--danger"
           >
+            <Trash2 size={16} />
             {loading ? "Eliminando..." : confirmLabel}
           </button>
         </div>

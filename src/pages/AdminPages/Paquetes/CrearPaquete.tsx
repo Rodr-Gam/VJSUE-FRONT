@@ -30,9 +30,7 @@ import { PACKAGE_IMAGE_ACCEPT } from "../../../types/package";
 
 import { validateTripDates } from "../../../utils/packageDates";
 
-import PackagePriceBreakdownFields, {
-  getPackagePriceBreakdownError,
-} from "../../../components/Admin/packages/PackageInfoPriceFields";
+import PackagePriceBreakdownFields from "../../../components/Admin/packages/PackageInfoPriceFields";
 import ServiceFinanceFields from "../../../components/Admin/ServiceFinanceFields";
 import {
   calcSupplierPaymentFromPlatformCost,
@@ -278,22 +276,6 @@ export default function CrearPaquete() {
 
       return;
 
-    }
-
-    const priceBreakdownError = getPackagePriceBreakdownError(
-      {
-        packageTotalCost,
-        priceAdult,
-        priceJunior,
-        priceChild,
-        passengerCounts,
-      },
-      true,
-    );
-
-    if (priceBreakdownError) {
-      setMensaje({ texto: priceBreakdownError, tipo: "error" });
-      return;
     }
 
     if (image) {

@@ -1174,3 +1174,203 @@
 .adm-finance-inline-btn--delete:hover:not(:disabled) {
   background: rgba(239, 68, 68, 0.16);
 }
+
+.adm-passenger-summary {
+  margin-top: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(25, 51, 85, 0.1);
+  background: rgba(248, 250, 252, 0.85);
+}
+
+.adm-passenger-summary-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+  color: #193355;
+}
+
+.adm-passenger-summary-head h5 {
+  margin: 0;
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.adm-passenger-summary-chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(211, 167, 98, 0.2);
+  color: #7c5a1e;
+}
+
+.adm-passenger-summary-list {
+  list-style: none;
+  margin: 0 0 0.65rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.adm-passenger-summary-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem 0.75rem;
+  font-size: 0.84rem;
+}
+
+.adm-passenger-summary-amounts {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.adm-passenger-summary-link {
+  margin-top: 0.25rem;
+}
+
+.adm-passenger-payments {
+  margin-top: 1rem;
+}
+
+.adm-finance-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.adm-finance-panel-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #193355;
+}
+
+.adm-passenger-mode {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.adm-passenger-equal-preview {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.1rem;
+  color: #334155;
+}
+
+.adm-passenger-custom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.adm-passenger-pay-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.adm-passenger-pay-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  background: #fff;
+}
+
+.adm-passenger-pay-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.adm-passenger-pay-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.adm-passenger-pay-stats dt {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.adm-passenger-pay-stats dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.adm-passenger-pay-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.adm-passenger-pay-badge--none {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.adm-passenger-pay-badge--partial {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.adm-passenger-pay-badge--paid {
+  background: #ecfdf5;
+  color: #15803d;
+}
+
+.adm-passenger-pay-moves {
+  font-size: 0.82rem;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+.adm-passenger-pay-moves ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.adm-passenger-pay-moves-title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.adm-payment-passenger-split {
+  grid-column: 1 / -1;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.adm-payment-passenger-row {
+  display: grid;
+  grid-template-columns: auto 1fr minmax(140px, 200px);
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.adm-payment-passenger-row-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}

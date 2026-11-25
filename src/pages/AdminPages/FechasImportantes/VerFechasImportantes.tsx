@@ -72,6 +72,7 @@ export default function VerFechasImportantes() {
   const [toast, setToast] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ImportantDate | null>(null);
   const [syncingId, setSyncingId] = useState<number | null>(null);
+  const [syncingAll, setSyncingAll] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
 
   const sortedItems = useMemo(() => sortByMonthDay(items), [items]);
@@ -122,17 +123,34 @@ export default function VerFechasImportantes() {
     const googleParam = searchParams.get("google");
     const msg = searchParams.get("message");
     if (googleParam === "connected") {
-      setToast("Google Calendar conectado correctamente.");
+      const syncTotal = Number(searchParams.get("sync_total") || 0);
+      const syncOk = Number(searchParams.get("sync_ok") || 0);
+      const syncPartial = Number(searchParams.get("sync_partial") || 0);
+      const syncFailed = Number(searchParams.get("sync_failed") || 0);
+      let msg = "Google Calendar conectado correctamente.";
+      if (syncTotal > 0) {
+        msg += ` Sincronizadas ${syncOk} fecha(s) en todas las cuentas.`;
+        if (syncPartial > 0) msg += ` ${syncPartial} parcial(es).`;
+        if (syncFailed > 0) msg += ` ${syncFailed} con error.`;
+      } else {
+        msg += " Usa «Sincronizar todas» si ya tenías fechas guardadas.";
+      }
+      setToast(msg);
       searchParams.delete("google");
       searchParams.delete("message");
+      searchParams.delete("sync_total");
+      searchParams.delete("sync_ok");
+      searchParams.delete("sync_partial");
+      searchParams.delete("sync_failed");
       setSearchParams(searchParams, { replace: true });
+      void loadAll();
     } else if (googleParam === "error") {
       setToast(msg ? decodeURIComponent(msg) : "Error al conectar Google Calendar.");
       searchParams.delete("google");
       searchParams.delete("message");
       setSearchParams(searchParams, { replace: true });
     }
-  }, [searchParams, setSearchParams]);
+  }, [searchParams, setSearchParams, loadAll]);
 
   const handleConnectGoogle = async () => {
     try {
@@ -143,26 +161,52 @@ export default function VerFechasImportantes() {
     }
   };
 
-  const handleDisconnectGoogle = async () => {
+  const handleDisconnectGoogle = async (connectionId?: number) => {
     try {
-      await importantDateService.googleDisconnect();
-      setToast("Google Calendar desconectado.");
+      await importantDateService.googleDisconnect(connectionId);
+      setToast(
+        connectionId != null
+          ? "Cuenta de Google Calendar desconectada."
+          : "Todas las cuentas de Google Calendar desconectadas.",
+      );
       await loadAll();
     } catch (err) {
       setToast(getImportantDateErrorMessage(err));
     }
   };
 
+  const connectedAccounts = useMemo(
+    () => (google?.connections ?? []).filter((c) => c.connected),
+    [google],
+  );
+
+  const canAddAccount =
+    google?.configured &&
+    (connectedAccounts.length < (google.max_connections ?? 5));
+
   const handleSync = async (id: number) => {
     setSyncingId(id);
     try {
-      await importantDateService.sync(id);
-      setToast("Sincronización completada o actualizada.");
+      const { message } = await importantDateService.sync(id);
+      setToast(message);
       await loadAll();
     } catch (err) {
       setToast(getImportantDateErrorMessage(err));
     } finally {
       setSyncingId(null);
+    }
+  };
+
+  const handleSyncAll = async () => {
+    setSyncingAll(true);
+    try {
+      const { message } = await importantDateService.syncAll();
+      setToast(message);
+      await loadAll();
+    } catch (err) {
+      setToast(getImportantDateErrorMessage(err, "No se pudo sincronizar con Google Calendar."));
+    } finally {
+      setSyncingAll(false);
     }
   };
 
@@ -235,20 +279,43 @@ export default function VerFechasImportantes() {
               {google?.configured && !google.connected && (
                 <p>No conectado — los registros quedarán pendientes de sincronización.</p>
               )}
+              {google?.configured && (
+                <p className="id-google-tz">
+                  Zona horaria:{" "}
+                  <em>{google.timezone_label ?? "Guadalajara, Jalisco (Centro de México)"}</em>
+                </p>
+              )}
+              {google?.connected && connectedAccounts.length > 0 && (
+                <ul className="id-google-accounts">
+                  {connectedAccounts.map((acc) => (
+                    <li key={acc.id}>
+                      <span>
+                        <em>{acc.google_email ?? "Cuenta conectada"}</em>
+                      </span>
+                      <button
+                        type="button"
+                        className="id-btn id-btn--ghost id-btn--compact"
+                        onClick={() => handleDisconnectGoogle(acc.id)}
+                      >
+                        <Link2Off size={13} aria-hidden />
+                        Quitar
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
               {google?.connected && (
-                <p>
-                  Conectado como <em>{google.google_email ?? "cuenta de agencia"}</em>
+                <p className="id-google-account-count">
+                  {connectedAccounts.length} cuenta
+                  {connectedAccounts.length === 1 ? "" : "s"} activa
+                  {connectedAccounts.length === 1 ? "" : "s"}
+                  {google.max_connections != null && ` (máx. ${google.max_connections})`}
                 </p>
               )}
             </div>
           </div>
           <div className="id-google-actions">
-            {google?.connected ? (
-              <button type="button" className="id-btn id-btn--ghost" onClick={handleDisconnectGoogle}>
-                <Link2Off size={14} />
-                Desconectar
-              </button>
-            ) : (
+            {!google?.connected ? (
               <button
                 type="button"
                 className="id-btn id-btn--primary"
@@ -258,6 +325,36 @@ export default function VerFechasImportantes() {
                 <Link2 size={14} />
                 Conectar Google Calendar
               </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="id-btn id-btn--primary"
+                  onClick={handleSyncAll}
+                  disabled={syncingAll}
+                >
+                  <RefreshCw size={14} className={syncingAll ? "id-form-spinner" : undefined} />
+                  {syncingAll ? "Sincronizando…" : "Sincronizar todas"}
+                </button>
+                {canAddAccount && (
+                  <button
+                    type="button"
+                    className="id-btn id-btn--primary"
+                    onClick={handleConnectGoogle}
+                  >
+                    <Link2 size={14} />
+                    Agregar otra cuenta
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="id-btn id-btn--ghost"
+                  onClick={() => handleDisconnectGoogle()}
+                >
+                  <Link2Off size={14} />
+                  Desconectar todas
+                </button>
+              </>
             )}
           </div>
         </section>
@@ -490,7 +587,9 @@ export default function VerFechasImportantes() {
                               >
                                 <Pencil size={14} />
                               </Link>
-                              {(row.sync_status === "error" || row.sync_status === "pending") && (
+                              {(row.sync_status === "error" ||
+                                row.sync_status === "pending" ||
+                                Boolean(row.sync_error)) && (
                                 <button
                                   type="button"
                                   className="id-action"
@@ -538,7 +637,9 @@ export default function VerFechasImportantes() {
                         <Link to={`/admin/fechas-importantes/${row.id}`} className="id-btn id-btn--ghost">
                           Editar
                         </Link>
-                        {(row.sync_status === "error" || row.sync_status === "pending") && (
+                        {(row.sync_status === "error" ||
+                          row.sync_status === "pending" ||
+                          Boolean(row.sync_error)) && (
                           <button
                             type="button"
                             className="id-btn id-btn--ghost"

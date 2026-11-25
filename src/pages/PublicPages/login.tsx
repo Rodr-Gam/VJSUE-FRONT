@@ -3,6 +3,7 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { api, setAuth } from "../../api";
 import { getUserRole } from "../../utils/userRole";
 import { parseApiValidationErrors } from "../../utils/apiHelpers";
+import { CLIENT_HOME_PATH } from "../../constants/clientPaths";
 import "../../styles/login.css";
 
 export default function LoginPage() {
@@ -64,7 +65,7 @@ export default function LoginPage() {
     } else if (redirectTo && redirectTo.startsWith("/cliente")) {
       navigate(redirectTo);
     } else {
-      navigate("/cliente/dashboard");
+      navigate(CLIENT_HOME_PATH);
     }
   };
 

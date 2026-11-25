@@ -15,7 +15,7 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
     );
   }
   if (!isAdmin) {
-    if (isCliente) return <Navigate to="/cliente/dashboard" replace />;
+    if (isCliente) return <Navigate to="/cliente/inicio" replace />;
     return <Navigate to="/login" replace />;
   }
 

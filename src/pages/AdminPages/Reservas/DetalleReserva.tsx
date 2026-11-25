@@ -28,21 +28,10 @@ import {
   InfoRow,
   StatusBadge,
 } from "../../../components/common/DetailBlocks";
-import {
-  formatDate,
-  formatPrice,
-  OCCUPANCY_LABELS,
-} from "../../../utils/format";
+import { formatDate, formatPrice } from "../../../utils/format";
 import { profitFromRecord } from "../../../utils/serviceProfit";
 
 import "../../../styles/AdminReservationDetail.css";
-
-interface RoomPrice {
-  id: number;
-  occupancy_type: "single" | "double" | "triple" | "quadruple" | "suite";
-  nightly_rate: string;
-  total_rooms: number;
-}
 
 interface Reservation {
   id: number;
@@ -103,7 +92,6 @@ interface Reservation {
     client_cost?: string | null;
     profit?: number | string | null;
     observations: string | null;
-    room_prices?: RoomPrice[];
   };
 
   transport?: {
@@ -397,26 +385,6 @@ export default function DetReserva() {
                 )}
               />
 
-              {reservation.hotel.room_prices &&
-                reservation.hotel.room_prices.length > 0 && (
-                  <div className="adm-detail-span-full">
-                    <p className="adm-detail-field-label">Tipos de habitación</p>
-                    <div className="adm-res-detail-rooms">
-                      {reservation.hotel.room_prices.map((room) => (
-                        <div key={room.id} className="adm-res-detail-room-row">
-                          <span className="font-semibold text-slate-700">
-                            {OCCUPANCY_LABELS[room.occupancy_type] ??
-                              room.occupancy_type}
-                          </span>
-                          <span>{formatPrice(room.nightly_rate)}/noche</span>
-                          <span className="text-slate-500">
-                            {room.total_rooms} hab.
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
             </SectionCard>
           )}
 

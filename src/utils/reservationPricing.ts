@@ -207,9 +207,104 @@ export function buildServiceCostLines(reserva: {
     lines.push({ label: "Transporte", amount: transportCost });
   }
 
-  lines.push(...buildHotelRoomExtraLines(reserva.hotel));
-
   return lines;
+}
+
+export function billableTravelerCount(counts: PassengerCounts): number {
+  const total = getTotalPassengers(counts);
+  return total > 0 ? total : 1;
+}
+
+export function unitCostFromTotal(total: number, travelerCount: number): number {
+  if (total <= 0 || travelerCount <= 0) return 0;
+  return Math.round((total / travelerCount) * 100) / 100;
+}
+
+export function formatPerPersonDetail(
+  quantity: number,
+  unitPrice: number,
+): string {
+  if (unitPrice <= 0) return "—";
+  if (quantity <= 1) return `${formatMXN(unitPrice)} por persona`;
+  return `${quantity} pers. × ${formatMXN(unitPrice)} c/u`;
+}
+
+export interface PdfPaymentCostRow {
+  concept: string;
+  perPersonDetail: string;
+  amount: number;
+}
+
+export function buildPdfPaymentCostRows(reserva: {
+  adults?: number;
+  juniors?: number;
+  children?: number;
+  reserved_seats?: number;
+  unit_price_adult?: string | number;
+  unit_price_junior?: string | number;
+  unit_price_child?: string | number;
+  flight?: { client_cost?: string | number | null };
+  transport?: { client_cost?: string | number | null };
+  hotel?: { room_prices?: HotelRoomPrice[] };
+}): PdfPaymentCostRow[] {
+  const counts = getReservationPassengerCounts(reserva);
+  const travelers = billableTravelerCount(counts);
+  const prices = {
+    adult: Number(reserva.unit_price_adult ?? 0),
+    junior: Number(reserva.unit_price_junior ?? 0),
+    child: Number(reserva.unit_price_child ?? 0),
+  };
+  const breakdown = buildPriceBreakdown(counts, prices);
+  const rows: PdfPaymentCostRow[] = [];
+
+  if (breakdown.length > 0) {
+    for (const line of breakdown) {
+      rows.push({
+        concept: `Paquete · ${line.label}`,
+        perPersonDetail: formatPerPersonDetail(line.quantity, line.unitPrice),
+        amount: line.subtotal,
+      });
+    }
+  } else {
+    const packageTotal = computePackageSubtotal(reserva);
+    rows.push({
+      concept: "Paquete",
+      perPersonDetail:
+        packageTotal > 0
+          ? formatPerPersonDetail(
+              travelers,
+              unitCostFromTotal(packageTotal, travelers),
+            )
+          : "—",
+      amount: packageTotal,
+    });
+  }
+
+  const flightCost = getServiceClientCost(reserva.flight?.client_cost);
+  if (flightCost > 0) {
+    rows.push({
+      concept: "Vuelo",
+      perPersonDetail: formatPerPersonDetail(
+        travelers,
+        unitCostFromTotal(flightCost, travelers),
+      ),
+      amount: flightCost,
+    });
+  }
+
+  const transportCost = getServiceClientCost(reserva.transport?.client_cost);
+  if (transportCost > 0) {
+    rows.push({
+      concept: "Transporte",
+      perPersonDetail: formatPerPersonDetail(
+        travelers,
+        unitCostFromTotal(transportCost, travelers),
+      ),
+      amount: transportCost,
+    });
+  }
+
+  return rows;
 }
 
 export function computeReservationDisplayTotal(reserva: {

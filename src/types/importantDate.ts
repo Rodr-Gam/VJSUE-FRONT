@@ -27,6 +27,7 @@ export interface ImportantDate {
   observation: string | null;
   reminder_preset: ReminderPreset;
   reminder_days_before: number | null;
+  reminder_on_date?: string | null;
   reminder_time: string | null;
   google_calendar_event_id: string | null;
   sync_status: ImportantDateSyncStatus;
@@ -47,14 +48,27 @@ export interface ImportantDatePayload {
   observation?: string;
   reminder_preset: ReminderPreset;
   reminder_days_before?: number | null;
+  reminder_on_date?: string | null;
   reminder_time?: string | null;
+}
+
+export interface GoogleCalendarConnectionSummary {
+  id: number;
+  google_email: string | null;
+  calendar_id: string;
+  connected: boolean;
+  connected_at: string | null;
 }
 
 export interface GoogleCalendarStatus {
   configured: boolean;
   connected: boolean;
+  max_connections?: number;
+  connections?: GoogleCalendarConnectionSummary[];
   google_email: string | null;
   calendar_id: string;
+  timezone?: string;
+  timezone_label?: string;
   connected_at: string | null;
 }
 

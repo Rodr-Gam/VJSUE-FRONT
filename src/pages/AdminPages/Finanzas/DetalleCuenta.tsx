@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowBigLeftIcon,
   PencilIcon,
@@ -8,6 +8,7 @@ import {
   Wallet,
   CalendarClock,
   Receipt,
+  Users,
 } from "lucide-react";
 import AdminLayout from "../../../layouts/AdminLayout";
 import LoadingScreen from "../../../components/Admin/LoadingScreen";
@@ -33,9 +34,19 @@ import PartialPaymentFormModal from "../../../components/Admin/finance/PartialPa
 import ScheduledPaymentFormModal from "../../../components/Admin/finance/ScheduledPaymentFormModal";
 import PaymentPlanSchedulePanel from "../../../components/Admin/finance/PaymentPlanSchedulePanel";
 import AccountPaymentProgress from "../../../components/Admin/finance/AccountPaymentProgress";
+import PassengerPaymentsPanel from "../../../components/Admin/finance/PassengerPaymentsPanel";
+import type { PassengerLedger } from "../../../types/finance";
 import "../../../styles/AdminFinance.css";
 
-type FinanceTab = "payments" | "scheduled";
+type FinanceTab = "payments" | "scheduled" | "passengers";
+
+const emptyPassengerLedger: PassengerLedger = {
+  enabled: false,
+  split_mode: null,
+  can_edit_shares: true,
+  unassigned_paid: 0,
+  passengers: [],
+};
 
 function clientName(account: Account): string {
   const user = account.reservation?.user;
@@ -65,6 +76,7 @@ function canEditScheduled(item: ScheduledPayment): boolean {
 export default function DetalleCuenta() {
   const { id } = useParams();
   const accountId = Number(id);
+  const [searchParams] = useSearchParams();
   const { mensaje, mostrarMensaje } = useToast();
 
   const [account, setAccount] = useState<Account | null>(null);
@@ -92,8 +104,14 @@ export default function DetalleCuenta() {
     if (!accountId) return;
     setLoading(true);
     try {
-      const data = await financeService.getAccount(accountId);
-      setAccount(data);
+      const [data, ledger] = await Promise.all([
+        financeService.getAccount(accountId),
+        financeService.getPassengerLedger(accountId).catch(() => null),
+      ]);
+      setAccount({
+        ...data,
+        passenger_ledger: ledger ?? data.passenger_ledger ?? emptyPassengerLedger,
+      });
     } catch (err) {
       mostrarMensaje(getFinanceErrorMessage(err, "No se pudo cargar la cuenta."), "error");
       setAccount(null);
@@ -105,6 +123,13 @@ export default function DetalleCuenta() {
   useEffect(() => {
     loadAccount();
   }, [loadAccount]);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "passengers" || tab === "scheduled" || tab === "payments") {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   const partialPayments = useMemo(
     () => account?.partial_payments ?? [],
@@ -126,6 +151,8 @@ export default function DetalleCuenta() {
     }
   };
 
+  const passengerLedger = account?.passenger_ledger ?? emptyPassengerLedger;
+
   const handleSavePayment = async (payload: Parameters<
     typeof financeService.createPartialPayment
   >[1]) => {
@@ -141,7 +168,8 @@ export default function DetalleCuenta() {
         : await financeService.createPartialPayment(account.id, payload);
 
       setPaymentModal({ open: false, payment: null });
-      await refreshAfterMutation(response.account);
+      await loadAccount();
+      setActiveTab("passengers");
       mostrarMensaje(
         response.message || "Pago guardado correctamente.",
         "success",
@@ -335,6 +363,14 @@ export default function DetalleCuenta() {
               <CalendarClock size={16} />
               Abonos programados ({scheduledPayments.length})
             </button>
+            <button
+              type="button"
+              className={`adm-finance-tab${activeTab === "passengers" ? " adm-finance-tab--active" : ""}`}
+              onClick={() => setActiveTab("passengers")}
+            >
+              <Users size={16} />
+              Pagos por pasajero
+            </button>
           </div>
 
           {activeTab === "payments" && (
@@ -437,6 +473,21 @@ export default function DetalleCuenta() {
                 </div>
               )}
             </>
+          )}
+
+          {activeTab === "passengers" && account && (
+            <PassengerPaymentsPanel
+              account={account}
+              ledger={passengerLedger}
+              disabled={isCanceled}
+              onLedgerUpdated={async (ledger) => {
+                setAccount((prev) =>
+                  prev ? { ...prev, passenger_ledger: ledger } : prev,
+                );
+                await loadAccount();
+              }}
+              onMessage={mostrarMensaje}
+            />
           )}
 
           {activeTab === "scheduled" && (
@@ -548,6 +599,8 @@ export default function DetalleCuenta() {
       <PartialPaymentFormModal
         isOpen={paymentModal.open}
         title={paymentModal.payment ? "Editar pago" : "Registrar pago"}
+        passengerLedger={passengerLedger}
+        reservationPassengers={account.reservation?.passengers}
         balanceDue={
           paymentModal.payment
             ? Number(account.balance_due) + Number(paymentModal.payment.amount)
@@ -581,9 +634,15 @@ export default function DetalleCuenta() {
         title="¿Eliminar registro?"
         description={
           deleteTarget
-            ? `Se eliminará el ${deleteTarget.label}. Esta acción no se puede deshacer.`
+            ? `Se eliminará el ${deleteTarget.label}.`
             : undefined
         }
+        footnote={
+          deleteTarget?.type === "payment"
+            ? "Al borrar un pago, el saldo de la cuenta y el reparto por pasajero se actualizan de inmediato."
+            : undefined
+        }
+        confirmLabel="Eliminar definitivamente"
         onCancel={() => setDeleteTarget(null)}
         onConfirm={handleConfirmDelete}
       />

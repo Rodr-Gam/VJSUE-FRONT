@@ -19,6 +19,17 @@ export const QUICK_RESERVATION_FORM_CONFIG: FlexibleReservationFormConfig = {
   errorFallback: "Error al crear la reserva.",
 };
 
+export const EDIT_QUICK_RESERVATION_FORM_CONFIG: FlexibleReservationFormConfig = {
+  pageTitle: "Editar reserva completa",
+  heroSubtitle:
+    "Actualiza viaje, precios, pasajeros y servicios (hotel, vuelo y transporte). Tours y reservas privadas usan el mismo formulario.",
+  submitLabel: "Guardar cambios",
+  submitLoadingLabel: "Guardando...",
+  apiPath: "/reservations/quick",
+  successFallback: "Reserva actualizada con éxito.",
+  errorFallback: "Error al actualizar la reserva.",
+};
+
 export const TOUR_RESERVATION_FORM_CONFIG: FlexibleReservationFormConfig = {
   pageTitle: "Crear tour",
   heroSubtitle:

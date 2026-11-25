@@ -8,7 +8,11 @@ import {
 import { buildClientAccountFallback } from "../../utils/financeAccount";
 import { formatMXN } from "../../utils/reservationPricing";
 import { formatAdminDate } from "../../utils/adminFormat";
-import { CalendarClock, Wallet } from "lucide-react";
+import { CalendarClock, Users, Wallet } from "lucide-react";
+import {
+  passengerPaymentStatusLabel,
+  passengerTypeLabel,
+} from "../../utils/passengerPaymentSplit";
 import ClientPaymentReceiptUpload from "./ClientPaymentReceiptUpload";
 import PaymentPlanSchedulePanel from "../Admin/finance/PaymentPlanSchedulePanel";
 import ReservationCostBreakdown from "../finance/ReservationCostBreakdown";
@@ -81,6 +85,9 @@ export default function ClientReservationFinance({
   const balance = Math.max(0, total - paid);
   const payments = sortedPayments(displayAccount.partial_payments ?? []);
   const scheduled = sortedScheduled(displayAccount.scheduled_payments ?? []);
+  const passengerLedger = displayAccount.passenger_ledger;
+  const showPassengerSplit =
+    passengerLedger?.enabled && (passengerLedger.passengers?.length ?? 0) > 0;
   const statusLabel = accountStateLabel[displayAccount.state] ?? displayAccount.state;
   const uploadsDisabled =
     reservationState === "canceled" ||
@@ -112,6 +119,44 @@ export default function ClientReservationFinance({
           <span className="dr-finance-stat-value">{formatMXN(balance)}</span>
         </div>
       </div>
+
+      {showPassengerSplit && passengerLedger && (
+        <div className="dr-passenger-payments">
+          <p className="dr-finance-list-title">
+            <Users size={14} aria-hidden="true" />
+            Tu parte del viaje (por pasajero)
+          </p>
+          <ul className="dr-passenger-pay-list">
+            {passengerLedger.passengers.map((row) => (
+              <li key={row.passenger_id} className="dr-passenger-pay-item">
+                <div>
+                  <strong>
+                    {[row.name, row.last_name].filter(Boolean).join(" ")}
+                  </strong>
+                  <span className="dr-finance-muted">
+                    {" "}
+                    · {passengerTypeLabel[row.type] ?? row.type}
+                  </span>
+                </div>
+                <div className="dr-passenger-pay-amounts">
+                  <span>Asignado {formatMXN(row.amount_due)}</span>
+                  <span className="dr-finance-stat-value--paid">
+                    Pagado {formatMXN(row.paid_amount)}
+                  </span>
+                  <span className="dr-finance-stat-value--due">
+                    Pendiente {formatMXN(row.balance_due)}
+                  </span>
+                </div>
+                <span
+                  className={`dr-passenger-pay-status dr-passenger-pay-status--${row.status}`}
+                >
+                  {passengerPaymentStatusLabel[row.status]}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {displayAccount.payment_plan_managed ? (
         <div className="dr-payment-plan-wrap">

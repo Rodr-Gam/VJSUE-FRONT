@@ -65,7 +65,7 @@ export default function PaymentPlanSchedulePanel({
     <div className={`adm-payment-plan${compact ? " adm-payment-plan--compact" : ""}`}>
       <div className="adm-payment-plan-head">
         <div className="adm-payment-plan-title-row">
-          <h3 className="adm-finance-panel-title">Plan de pagos del tour</h3>
+          <h3 className="adm-finance-panel-title">Plan de pagos</h3>
           <span className="adm-payment-plan-chip">
             {account.payment_plan_installments ?? planItems.length} parcialidades
           </span>

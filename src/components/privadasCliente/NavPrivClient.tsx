@@ -6,12 +6,13 @@ import {
   BellIcon,
   LogOutIcon,
   PackageIcon,
-  LayoutDashboardIcon,
+  Home,
   Menu,
   X,
   UserRound,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
+import { CLIENT_HOME_PATH } from "../../constants/clientPaths";
 import { reservationService } from "../../reservationService";
 import {
   applyReadState,
@@ -130,7 +131,7 @@ export default function NavprivClient() {
   return (
     <>
       <header className="npc-header">
-        <Link to="/cliente/dashboard" className="npc-brand">
+        <Link to={CLIENT_HOME_PATH} className="npc-brand">
           <div className="npc-logo-wrap">
             <img src={Logo} alt="Logo" />
           </div>
@@ -139,13 +140,13 @@ export default function NavprivClient() {
 
         <nav className="client-nav-links">
           <NavLink
-            to="/cliente/dashboard"
+            to={CLIENT_HOME_PATH}
             className={({ isActive }) =>
               `client-nav-link${isActive ? " client-nav-link--active" : ""}`
             }
           >
-            <LayoutDashboardIcon size={16} />
-            Mis reservas
+            <Home size={16} />
+            Inicio
           </NavLink>
           <NavLink
             to="/paquetes-disponibles"
@@ -225,8 +226,8 @@ export default function NavprivClient() {
                 )}
 
                 <div className="npc-notif-footer">
-                  <Link to="/cliente/dashboard" onClick={() => setOpen(false)}>
-                    Ir a mis reservas â†’
+                  <Link to={CLIENT_HOME_PATH} onClick={() => setOpen(false)}>
+                    Ir al inicio →
                   </Link>
                 </div>
               </div>
@@ -275,14 +276,14 @@ export default function NavprivClient() {
         aria-hidden={!menuOpen}
       >
         <NavLink
-          to="/cliente/dashboard"
+          to={CLIENT_HOME_PATH}
           className={({ isActive }) =>
             `npc-mobile-nav-link${isActive ? " npc-mobile-nav-link--active" : ""}`
           }
           onClick={closeMenu}
         >
-          <LayoutDashboardIcon size={18} />
-          Mis reservas
+          <Home size={18} />
+          Inicio
         </NavLink>
         <NavLink
           to="/paquetes-disponibles"

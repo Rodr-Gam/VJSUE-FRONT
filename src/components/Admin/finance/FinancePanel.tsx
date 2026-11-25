@@ -8,6 +8,8 @@ import { formatAdminDate } from "../../../utils/adminFormat";
 import { AccountStateBadge } from "./AccountStateBadge";
 import AdminPaymentReceiptsPanel from "./AdminPaymentReceiptsPanel";
 import ReservationCostBreakdown from "../../finance/ReservationCostBreakdown";
+import PassengerPaymentsSummary from "./PassengerPaymentsSummary";
+import type { PassengerLedger } from "../../../types/finance";
 
 interface FinancePanelProps {
   reservationId: number;
@@ -18,6 +20,14 @@ function clientName(account: Account): string {
   if (!user) return "—";
   return [user.name, user.last_name].filter(Boolean).join(" ");
 }
+
+const emptyLedger: PassengerLedger = {
+  enabled: false,
+  split_mode: null,
+  can_edit_shares: true,
+  unassigned_paid: 0,
+  passengers: [],
+};
 
 export default function FinancePanel({ reservationId }: FinancePanelProps) {
   const [account, setAccount] = useState<Account | null>(null);
@@ -73,6 +83,8 @@ export default function FinancePanel({ reservationId }: FinancePanelProps) {
 
   const payments = account.partial_payments ?? [];
   const scheduled = account.scheduled_payments ?? [];
+  const passengerLedger = account.passenger_ledger ?? emptyLedger;
+  const hasPassengers = (account.reservation?.passengers?.length ?? 0) > 0;
 
   return (
     <div>
@@ -130,6 +142,14 @@ export default function FinancePanel({ reservationId }: FinancePanelProps) {
           {scheduled.length}
         </p>
       </div>
+
+      {hasPassengers && (
+        <PassengerPaymentsSummary
+          account={account}
+          ledger={passengerLedger}
+          compact
+        />
+      )}
 
       <Link
         to={`/admin/cuentas/${account.id}`}

@@ -67,7 +67,10 @@ function totalPassengers(counts?: PackagePricePassengerCounts): number {
   return counts.adults + counts.juniors + counts.children;
 }
 
-/** Suma ponderada por cantidad de pasajeros cuando hay conteos; si no, suma de los tres precios. */
+/**
+ * - Reserva / cupo con pasajeros: unitarios × cantidad = costo plataforma.
+ * - Paquete catálogo sin cupo: suma de los tres precios = costo plataforma.
+ */
 export function sumBreakdownPricesForValidation(
   adult: string,
   junior: string,
@@ -137,49 +140,10 @@ export function getPackagePriceBreakdownStatus(
   };
 }
 
-/**
- * @param onSubmit Si es true y hay costo plataforma, exige los tres precios y suma exacta.
- */
+/** Validación deshabilitada: solo referencia visual en el formulario. */
 export function validatePackagePriceBreakdown(
-  input: PackagePriceBreakdownInput,
-  onSubmit = false,
+  _input: PackagePriceBreakdownInput,
+  _onSubmit = false,
 ): string | null {
-  const status = getPackagePriceBreakdownStatus(input);
-  const totalFilled = input.packageTotalCost.trim() !== "";
-
-  if (!totalFilled) {
-    return null;
-  }
-
-  if (status.exceedsTotal && status.total !== null) {
-    const over = (status.sum - status.total).toFixed(2);
-    return `La suma es ($${status.sum.toFixed(2)}) supera el costo real plataforma. Exceso: $${over}.`;
-  }
-
-  if (!onSubmit) {
-    return null;
-  }
-
-  if (!status.allPricesFilled) {
-    return "Completa precio adulto, juvenil y niño.";
-  }
-
-  if (status.total === null) {
-    return "El costo real plataforma no es válido.";
-  }
-
-  const sumCents = Math.round(status.sum * 100);
-  const totalCents = Math.round(status.total * 100);
-
-  if (sumCents > totalCents) {
-    const over = ((sumCents - totalCents) / 100).toFixed(2);
-    return `La suma por edad no puede superar el costo real plataforma. Exceso: $${over}.`;
-  }
-
-  if (sumCents !== totalCents) {
-    const diff = (Math.abs(sumCents - totalCents) / 100).toFixed(2);
-    return `Los precios por edad deben sumar exactamente el costo real plataforma. Diferencia: $${diff}.`;
-  }
-
   return null;
 }

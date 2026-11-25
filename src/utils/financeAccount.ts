@@ -1,4 +1,10 @@
-import type { Account, AccountState, PartialPayment, ScheduledPayment } from "../types/finance";
+import type {
+  Account,
+  AccountState,
+  PartialPayment,
+  PassengerLedger,
+  ScheduledPayment,
+} from "../types/finance";
 
 function getPartialPayments(account: Account): PartialPayment[] {
   const raw = account as Account & { partialPayments?: PartialPayment[] };
@@ -40,12 +46,16 @@ export function normalizeAccount(account: Account): Account {
     balance = Math.max(0, total - paid);
   }
 
+  const ledgerRaw = (account as Account & { passenger_ledger?: PassengerLedger })
+    .passenger_ledger;
+
   return {
     ...account,
     partial_payments: payments,
     scheduled_payments: scheduled,
     paid_amount: paid,
     balance_due: balance,
+    ...(ledgerRaw ? { passenger_ledger: ledgerRaw } : {}),
   };
 }
 

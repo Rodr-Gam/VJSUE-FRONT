@@ -21,13 +21,15 @@ export interface QuickReservationFinanceInput {
   includeFlight: boolean;
   flightSupplierPayment: string;
   flightClientCost: string;
+  flightPassengerCount?: number;
   flightBonusDiscount?: string;
   includeTransport: boolean;
   transportSupplierPayment: string;
   transportClientCost: string;
+  transportPassengerCount?: number;
   transportBonusDiscount?: string;
   includeHotel: boolean;
-  roomPrices: QuickReservationRoomPriceInput[];
+  roomPrices?: QuickReservationRoomPriceInput[];
 }
 
 export interface QuickReservationFinanceLine {
@@ -66,9 +68,78 @@ export interface QuickReservationFinanceSummary {
   };
 }
 
-function parseAmount(value: string): number {
+export function parseMoneyAmount(value: string): number {
   const amount = parseFloat(value);
   return Number.isFinite(amount) && amount >= 0 ? amount : 0;
+}
+
+function parseAmount(value: string): number {
+  return parseMoneyAmount(value);
+}
+
+export function normalizePassengerCount(value: number | undefined): number {
+  const n = Math.floor(Number(value));
+  return Number.isFinite(n) && n > 0 ? n : 1;
+}
+
+export function multiplyMoneyInput(value: string, count: number): string {
+  const unit = parseMoneyAmount(value);
+  const qty = normalizePassengerCount(count);
+  if (unit <= 0) return "";
+  return (Math.round(unit * qty * 100) / 100).toFixed(2);
+}
+
+function perPersonServiceAmounts(
+  included: boolean,
+  unitProviderCost: string,
+  unitClientCost: string,
+  bonusDiscount: string,
+  passengerCount: number,
+): Pick<
+  QuickReservationFinanceLine,
+  | "platformCost"
+  | "bonusDiscount"
+  | "providerCost"
+  | "clientCost"
+  | "profitGross"
+  | "profitNet"
+  | "detail"
+> {
+  const count = normalizePassengerCount(passengerCount);
+  const unitProvider = parseAmount(unitProviderCost);
+  const unitClient = parseAmount(unitClientCost);
+
+  if (!included) {
+    return {
+      platformCost: 0,
+      bonusDiscount: 0,
+      providerCost: 0,
+      clientCost: 0,
+      profitGross: 0,
+      profitNet: 0,
+    };
+  }
+
+  const provider = Math.round(unitProvider * count * 100) / 100;
+  const client = Math.round(unitClient * count * 100) / 100;
+  const bonus = parseAmount(bonusDiscount);
+  const profitGross = calcServiceProfit(client, provider) ?? client - provider;
+  const profitNet = profitGross - bonus;
+
+  const detail =
+    count > 1 || unitClient > 0 || unitProvider > 0
+      ? `${count} pers. × ${formatMXN(unitClient)} cobro · ${formatMXN(unitProvider)} proveedor c/u`
+      : undefined;
+
+  return {
+    platformCost: 0,
+    bonusDiscount: bonus,
+    providerCost: provider,
+    clientCost: client,
+    profitGross,
+    profitNet,
+    detail,
+  };
 }
 
 function serviceAmounts(
@@ -173,22 +244,26 @@ export function buildQuickReservationFinanceSummary(
     packageDetails.push(`${input.children} niño(s) × ${formatMXN(childUnit)}`);
   }
 
-  const flight = serviceAmounts(
+  const flight = perPersonServiceAmounts(
     input.includeFlight,
     input.flightSupplierPayment,
     input.flightClientCost,
     input.flightBonusDiscount ?? "",
+    input.flightPassengerCount ?? 1,
   );
-  const transport = serviceAmounts(
+  const transport = perPersonServiceAmounts(
     input.includeTransport,
     input.transportSupplierPayment,
     input.transportClientCost,
     input.transportBonusDiscount ?? "",
+    input.transportPassengerCount ?? 1,
   );
 
+  const roomPrices = input.roomPrices ?? [];
   const hotelRoomExtras = input.includeHotel
-    ? calcHotelRoomExtrasTotal(input.roomPrices)
+    ? calcHotelRoomExtrasTotal(roomPrices)
     : 0;
+  const hotelInFinance = input.includeHotel && hotelRoomExtras > 0;
 
   const hotel: Pick<
     QuickReservationFinanceLine,
@@ -255,10 +330,10 @@ export function buildQuickReservationFinanceSummary(
     {
       key: "hotel",
       label: "Hotel",
-      detail: input.includeHotel
-        ? buildHotelRoomExtrasDetail(input.roomPrices)
+      detail: hotelInFinance
+        ? buildHotelRoomExtrasDetail(roomPrices)
         : undefined,
-      included: input.includeHotel,
+      included: hotelInFinance,
       ...hotel,
     },
   ];

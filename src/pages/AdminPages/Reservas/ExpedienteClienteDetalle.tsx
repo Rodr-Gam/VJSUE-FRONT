@@ -23,20 +23,9 @@ import ReservationDocuments from "../../../components/Admin/ReservationDocuments
 import FinancePanel from "../../../components/Admin/finance/FinancePanel";
 import { StatusBadge } from "../../../components/common/DetailBlocks";
 import { api } from "../../../api";
-import {
-  formatDate,
-  formatPrice,
-  OCCUPANCY_LABELS,
-} from "../../../utils/format";
+import { formatDate, formatPrice } from "../../../utils/format";
 import { profitFromRecord } from "../../../utils/serviceProfit";
 import "../../../styles/AdminExpediente.css";
-
-interface RoomPrice {
-  id: number;
-  occupancy_type: string;
-  nightly_rate: string;
-  total_rooms: number;
-}
 
 interface ServiceFlight {
   airline_name: string;
@@ -60,7 +49,6 @@ interface ServiceHotel {
   client_cost?: string | null;
   profit?: number | string | null;
   observations: string | null;
-  room_prices?: RoomPrice[];
 }
 
 interface ServiceTransport {
@@ -309,23 +297,6 @@ function ReservationBreakdown({
                     value={hotel.booking_source}
                   />
                 </div>
-                {hotel.room_prices && hotel.room_prices.length > 0 && (
-                  <div className="mt-3">
-                    <p className="exp-field-label mb-2">Habitaciones</p>
-                    {hotel.room_prices.map((room) => (
-                      <div key={room.id} className="exp-room-row">
-                        <span className="font-semibold text-[#193355]">
-                          {OCCUPANCY_LABELS[room.occupancy_type] ??
-                            room.occupancy_type}
-                        </span>
-                        <span>{formatPrice(room.nightly_rate)}/noche</span>
-                        <span className="text-gray-500">
-                          {room.total_rooms} hab.
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
                 <ExpCostStrip
                   providerCost={hotel.provider_cost}
                   clientCost={hotel.client_cost}
